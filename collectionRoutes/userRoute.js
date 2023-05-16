@@ -1,12 +1,11 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
-const userSchema = require("./userSchema.js");
+const userSchema = require("../collectionSchemas/userSchema.js");
 const User = new mongoose.model ("User", userSchema);
 // GET
 router.get('/', async(req, res) => {
-    // To get data using query
-    await User.find({status: 'inactive',title: "Learn CSS Grid"}) //find({}) for all
+    await User.find({}) 
     .then((data)=>{
         res.status(200).json({
             data: data
@@ -17,24 +16,6 @@ router.get('/', async(req, res) => {
             error: "Oops! Something went wrong!"
         })
     })
-    // To get data without some _id & title field with certain limit
-    /* await User.find({status: 'inactive',title: "Learn CSS Grid"})
-    .select({
-        _id: 0,
-        title: 0,
-        __v: 0
-    })
-    .limit(2)
-    .then((data)=>{
-        res.status(200).json({
-            data: data
-        })
-    })
-    .catch(()=>{
-        res.status(400).json({
-            error: "Oops! Something went wrong!"
-        })
-    }) */
 })
 
 // GET by Id
@@ -72,17 +53,7 @@ router.post('/', async(req, res) => {
 
 // POST many
 router.post('/all', async(req, res) => {
-    await User.insertMany(req.body)
-    .then(()=>{
-        res.status(200).json({
-            result: "All Data Insertion successful"
-        })
-    })
-    .catch(()=>{
-        res.status(400).json({
-            error: "Oops! Something went wrong!"
-        })
-    })
+    
 })
 
 
@@ -90,7 +61,7 @@ router.post('/all', async(req, res) => {
 router.put('/:id', async(req, res) => {
     await User.updateOne({_id: req.params.id}, {
         $set: {
-            status: 'inactive'
+            address: req.body.address
         }
     })
     .then(()=>{
