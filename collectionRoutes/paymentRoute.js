@@ -70,6 +70,22 @@ router.get('/', async(req, res) => {
 })
 
 
+// DELETE by ID
+router.delete('/:id', async(req, res) => {
+    await Payment.deleteOne({_id: req.params.id})
+    .then(()=>{
+        res.status(200).json({
+            result: "Data deletion successful"
+        })
+    })
+    .catch(()=>{
+        res.status(400).json({
+            error: "Oops! Something went wrong!"
+        })
+    })
+})
+
+
 // GET by user ID who made payment
 router.get('/user', async(req, res) => {
     //
