@@ -18,7 +18,7 @@ const seatSchema = mongoose.Schema({
     },
   ],
   vacant: {
-    type: String,
+    type: Number,
     default: function () {
       if (this.member.length < 6) {
         return 6-this.member.length;

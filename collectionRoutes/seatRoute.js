@@ -5,7 +5,7 @@ const seatSchema = require("../collectionSchemas/seatSchema.js");
 const Seat = new mongoose.model ("Seat", seatSchema);
 // GET
 router.get('/', async(req, res) => {
-    /* await Seat.find({}) 
+    await Seat.find({})
     .then((data)=>{
         res.status(200).json({
             data: data
@@ -15,7 +15,7 @@ router.get('/', async(req, res) => {
         res.status(400).json({
             error: "Oops! Something went wrong!"
         })
-    }) */
+    })
 })
 
 // GET by Id
@@ -67,9 +67,83 @@ router.post('/all', async(req, res) => {
 })
 
 
-// PUT
-router.put('/:room', async(req, res) => {
-    
+// Remove user to seat
+router.put('/:room/remove-user', async(req, res) => {
+    await Seat.updateOne({room: req.params.room}, {
+        $pull: {
+            member: { $in: [ req.body.member ] }
+        }
+    }
+    )
+    .then(()=>{
+        res.status(200).json({
+            result: "Data update successful"
+        })
+    })
+    .catch(()=>{
+        res.status(400).json({
+            error: "Oops! Something went wrong!"
+        })
+    })
+})
+router.put('/:room/add-vacancy', async(req, res) => {
+    const vacant = req.body.vacant + 1;
+    await Seat.updateOne({room: req.params.room}, {
+        $set: {
+            vacant: vacant
+        }
+    }
+    )
+    .then(()=>{
+        res.status(200).json({
+            result: "Data update successful"
+        })
+    })
+    .catch((err)=>{
+        res.status(400).json({
+            message: err,
+            error: "Oops! Something went wrong!"
+        })
+    })
+})
+// Add user to seat
+router.put('/:room/insert-user', async(req, res) => {
+    await Seat.updateOne({room: req.params.room}, {
+        $push: {
+            member: req.body.member
+        }
+    }
+    )
+    .then(()=>{
+        res.status(200).json({
+            result: "Data update successful"
+        })
+    })
+    .catch(()=>{
+        res.status(400).json({
+            error: "Oops! Something went wrong!"
+        })
+    })
+})
+router.put('/:room/remove-vacancy', async(req, res) => {
+    const vacant = req.body.vacant - 1;
+    await Seat.updateOne({room: req.params.room}, {
+        $set: {
+            vacant: vacant
+        }
+    }
+    )
+    .then(()=>{
+        res.status(200).json({
+            result: "Data update successful"
+        })
+    })
+    .catch((err)=>{
+        res.status(400).json({
+            message: err,
+            error: "Oops! Something went wrong!"
+        })
+    })
 })
 
 
