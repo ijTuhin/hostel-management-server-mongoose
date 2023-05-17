@@ -1,13 +1,40 @@
 const mongoose = require("mongoose");
 const seatSchema = mongoose.Schema({
-  member1: String,
-  member2: String,
-  member3: String,
-  member4: String,
-  member5: String,
-  member6: String,
   room: String,
-  vacancy: Boolean
+  member: [
+    {
+      type: String,
+      validate: {
+        validator: function () {
+          return !(this.member.length > 6);
+        },
+      },
+      /* default: function () {
+        if (this.member.length < 6) {
+          return true;
+        }
+        return false;
+      }, */
+    },
+  ],
+  vacant: {
+    type: String,
+    default: function () {
+      if (this.member.length < 6) {
+        return 6-this.member.length;
+      }
+      return "0";
+    },
+  },
+  vacancy: {
+    type: Boolean,
+    default: function () {
+      if (this.member.length < 6) {
+        return true;
+      }
+      return false;
+    },
+  },
 });
 
 module.exports = seatSchema;

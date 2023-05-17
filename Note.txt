@@ -1,0 +1,6 @@
+https://www.mongodb.com/docs/manual/reference/operator/update/
+1. insert data into array $push 
+2. remove data from array $pull 
+3. add a value to an array unless the value is already present, in which case does nothing to that array $addToSet
+4. for utility Update operation $[<identifier>]
+5. 
