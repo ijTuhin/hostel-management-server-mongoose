@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const paymentSchema = mongoose.Schema({
-  type: {
+  item: {
     type: String,
     enum: ["meal", "rent"],
   },
