@@ -4,6 +4,7 @@ const cors = require("cors");
 const userRoute = require("./collectionRoutes/userRoute.js")
 const seatRoute = require("./collectionRoutes/seatRoute.js")
 const paymentRoute = require("./collectionRoutes/paymentRoute.js")
+const mealRoute = require("./collectionRoutes/mealRoute.js")
 const app = express();
 // const port = process.env.PORT || 5000;
 
@@ -27,6 +28,7 @@ mongoose
 app.use('/user', userRoute)
 app.use('/seat', seatRoute)
 app.use('/payment', paymentRoute)
+app.use('/meal', mealRoute)
 
 app.listen(3000, () => {
   console.log("Mongoose Server running");
