@@ -35,9 +35,12 @@ router.get('/:id', async(req, res) => {
         })
     })
 })
-// GET meal payment
-/* router.get('/:item', async(req, res) => {
-    await Payment.find({item: req.params.item})
+
+
+// GET meal payment http://localhost:3000/payment?item=meal
+// GET rent payment http://localhost:3000/payment?item=rent
+router.get('/', async(req, res) => {
+    await Payment.find({item: req.query.item})
     .then((data)=>{
         res.status(200).json({
             data: data
@@ -48,7 +51,9 @@ router.get('/:id', async(req, res) => {
             error: "Oops! Something went wrong!"
         })
     })
-}) */
+})
+
+
 // GET all
 router.get('/', async(req, res) => {
     await Payment.find({})
@@ -62,6 +67,12 @@ router.get('/', async(req, res) => {
             error: "Oops! Something went wrong!"
         })
     })
+})
+
+
+// GET by user ID who made payment
+router.get('/user', async(req, res) => {
+    //
 })
 
 module.exports = router
