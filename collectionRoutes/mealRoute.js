@@ -22,6 +22,42 @@ router.post('/order', async(req, res) => {
 })
 
 
+// UPDATE status by Id
+router.put('/:id', async(req, res) => {
+    await Meal.updateOne({_id: req.params.id}, {
+        $set: {
+            status: req.body.status
+        }
+    })
+    .then(()=>{
+        res.status(200).json({
+            result: "Data update successful"
+        })
+    })
+    .catch(()=>{
+        res.status(400).json({
+            error: "Oops! Something went wrong!"
+        })
+    })
+})
+
+
+// DELETE meal request by ID
+router.delete('/:id', async(req, res) => {
+    await Meal.deleteOne({_id: req.params.id, status: 0}) // deletes data according to condition but not showing error while condition not fulfiled
+    .then(()=>{
+        res.status(201).json({
+            result: "Data deletion successful"
+        })
+    })
+    .catch(()=>{
+        res.status(400).json({
+            error: "Oops! Something went wrong!"
+        })
+    })
+})
+
+
 // GET by id
 router.get('/:id', async(req, res) => {
     await Meal.find({_id: req.params.id})
