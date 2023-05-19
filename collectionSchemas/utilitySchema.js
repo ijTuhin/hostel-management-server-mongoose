@@ -26,7 +26,8 @@ const utilitySchema = mongoose.Schema({
     Date: {
         type: String,
         default: "---"
-    }
+    },
+    /* DueId : GET Id of the utility to update that month's payment */
 })
 
 

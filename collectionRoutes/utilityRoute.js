@@ -5,6 +5,40 @@ const utilitySchema = require("../collectionSchemas/utilitySchema")
 const Utility = new mongoose.model("Utility", utilitySchema)
 
 
+// GET by month http://localhost:3000/utility?month={$month}
+router.get('/', async(req, res) => {
+    await Utility.find({month:req.query.month}) 
+    .then((data)=>{
+        res.status(200).json({
+            data: data
+        })
+    })
+    .catch(()=>{
+        res.status(400).json({
+            error: "Oops! Something went wrong!"
+        })
+    })
+})
+
+
+// GET by utility name || Pending
+
+// GET by Id
+router.get('/:id', async(req, res) => {
+    await Utility.find({_id: req.params.id})
+    .then((data)=>{
+        res.status(200).json({
+            data: data
+        })
+    })
+    .catch(()=>{
+        res.status(400).json({
+            error: "Oops! Something went wrong!"
+        })
+    })
+})
+
+
 // POST new Utility
 router.post('/', async(req, res) => {
     const newUtility = new Utility(req.body);
@@ -26,6 +60,43 @@ router.post('/new', async(req, res) => {
     .then(()=>{
         res.status(200).json({
             success: "Insertion successful"
+        })
+    })
+    .catch(()=>{
+        res.status(400).json({
+            error: "Oops! Something went wrong!"
+        })
+    })
+})
+
+
+// UPDATE utility bill & status
+router.put('/insert-bill/:id', async(req, res) => { // From Warden Panel
+    await Utility.updateOne({_id: req.params.id, status: 1}, {
+        $set: {
+            bill: req.body.bill
+        }
+    })
+    .then(()=>{
+        res.status(200).json({
+            result: "Data update successful"
+        })
+    })
+    .catch(()=>{
+        res.status(400).json({
+            error: "Oops! Something went wrong!"
+        })
+    })
+})
+router.put('/pay-bill/:id', async(req, res) => { // From Finance Panel
+    await Utility.updateOne({_id: req.params.id, status: 1}, {
+        $set: {
+            status: 0
+        }
+    })
+    .then(()=>{
+        res.status(200).json({
+            result: "Data update successful"
         })
     })
     .catch(()=>{
