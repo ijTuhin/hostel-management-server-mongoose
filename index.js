@@ -7,6 +7,8 @@ const paymentRoute = require("./collectionRoutes/paymentRoute.js")
 const mealRoute = require("./collectionRoutes/mealRoute.js")
 const attendanceRoute = require("./collectionRoutes/attendanceRoute.js")
 const utilityRoute = require("./collectionRoutes/utilityRoute.js")
+const staffRoute = require("./collectionRoutes/staffRoute.js")
+const salaryRoute = require("./collectionRoutes/salaryRoute.js")
 const app = express();
 // const port = process.env.PORT || 5000;
 
@@ -33,6 +35,8 @@ app.use('/payment', paymentRoute)
 app.use('/meal', mealRoute)
 app.use('/attendance', attendanceRoute)
 app.use('/utility', utilityRoute)
+app.use('/staff', staffRoute)
+app.use('/salary', salaryRoute)
 
 app.listen(3000, () => {
   console.log("Mongoose Server running");
