@@ -75,7 +75,17 @@ router.get('/:id', async(req, res) => {
 
 // GET all
 router.get('/', async(req, res) => {
-    await Meal.find({})
+    let query = {};
+    if(req.query.date && req.query.meal && req.query.status){
+        query = {meal: req.query.meal, date: req.query.date, status: req.query.status} //http://localhost:3000/meal?meal={$meal}&date={$date}&status={$status}
+    }
+    else if(req.query.meal){
+        query = {meal: req.query.meal} //http://localhost:3000/meal?meal={$meal}
+    }
+    else if(req.query.date){
+        query = {date: req.query.date} //http://localhost:3000/meal?date={$date}
+    }
+    await Meal.find(query)
     .then((data)=>{
         res.status(200).json({
             data: data
@@ -87,50 +97,5 @@ router.get('/', async(req, res) => {
         })
     })
 })
-
-// GET by status AND meal AND date
-router.get('/', async(req, res) => {
-    
-})
-
-
-/* ==============================================
-    Need to solve the url issue,
-    below operationscan't be done as we have
-    already used '/' url for getting all data
-============================================== */
-
-// GET by Meal name http://localhost:3000/meal?meal=Breakfast
-/* router.get('/', async(req, res) => {
-    await Meal.find({meal: req.query.meal})
-    .then((data)=>{
-        res.status(200).json({
-            data: data
-        })
-    })
-    .catch(()=>{
-        res.status(400).json({
-            error: "Oops! Something went wrong!"
-        })
-    })
-}) */
-
-// GET by Date http://localhost:3000/date?date=Breakfast
-/* router.get('/', async(req, res) => {
-    await Meal.find({date: req.query.date})
-    .then((data)=>{
-        res.status(200).json({
-            data: data
-        })
-    })
-    .catch(()=>{
-        res.status(400).json({
-            error: "Oops! Something went wrong!"
-        })
-    })
-}) */
-
-
-
 
 module.exports = router;

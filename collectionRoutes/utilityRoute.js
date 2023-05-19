@@ -7,7 +7,14 @@ const Utility = new mongoose.model("Utility", utilitySchema)
 
 // GET by month http://localhost:3000/utility?month={$month}
 router.get('/', async(req, res) => {
-    await Utility.find({month:req.query.month}) 
+    let query = {}
+    if(req.query.month){
+        query = {month:req.query.month} // http://localhost:3000/attendance?month={$month}
+    }
+    else if(req.query.name){
+        query = {name:req.query.name} // http://localhost:3000/attendance?name={$name}
+    }
+    await Utility.find(query) 
     .then((data)=>{
         res.status(200).json({
             data: data
@@ -20,8 +27,6 @@ router.get('/', async(req, res) => {
     })
 })
 
-
-// GET by utility name || Pending
 
 // GET by Id
 router.get('/:id', async(req, res) => {

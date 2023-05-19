@@ -55,9 +55,13 @@ router.get('/:id', async(req, res) => {
 })
 
 
-// GET by Date http://localhost:3000/date?date={$date}
+// GET by Query 
 router.get('/', async(req, res) => {
-    await Attendance.find({date: req.query.date})
+    let query = {}
+    if(req.query.date){
+        query = {date: req.query.date} // http://localhost:3000/attendance?date={$date}
+    }
+    await Attendance.find(query)
     .then((data)=>{
         res.status(200).json({
             data: data
@@ -69,25 +73,5 @@ router.get('/', async(req, res) => {
         })
     })
 })
-
-
-// GET all
-/* router.get('/', async(req, res) => {
-    await Attendance.find({})
-    .then((data)=>{
-        res.status(200).json({
-            data: data
-        })
-    })
-    .catch(()=>{
-        res.status(400).json({
-            error: "Oops! Something went wrong!"
-        })
-    })
-}) */
-
-
-
-
 
 module.exports = router

@@ -5,7 +5,15 @@ const salarySchema = require("../collectionSchemas/salarySchema.js");
 const Salary = new mongoose.model ("Salary", salarySchema);
 // GET
 router.get('/', async(req, res) => {
-    await Salary.find({}) 
+    let query = {}
+    if(req.query.month){
+        query = {month: req.query.month} //http://localhost:3000/salary?month={$month}
+    }
+    else if(req.query.date){
+        query = {date: req.query.date} //http://localhost:3000/salary?date={$date}
+    }
+    // else if(req.query.staff) for staff record
+    await Salary.find(query) 
     .then((data)=>{
         res.status(200).json({
             data: data

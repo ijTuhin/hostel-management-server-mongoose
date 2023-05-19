@@ -39,8 +39,17 @@ router.get('/:id', async(req, res) => {
 
 // GET meal payment http://localhost:3000/payment?item=meal
 // GET rent payment http://localhost:3000/payment?item=rent
+
 router.get('/', async(req, res) => {
-    await Payment.find({item: req.query.item})
+    let query = {};
+    if(req.query.item){
+        query = {
+            item: req.query.item
+        }
+    }
+
+    // else if(req.query.user && req.query.item) for user payment record
+    await Payment.find(query)
     .then((data)=>{
         res.status(200).json({
             data: data

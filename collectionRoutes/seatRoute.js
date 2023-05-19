@@ -6,7 +6,11 @@ const Seat = new mongoose.model ("Seat", seatSchema);
 
 // GET all
 router.get('/', async(req, res) => {
-    await Seat.find({})
+    let query = {}
+    if(req.query.vacancy){
+        query = {vacancy: req.query.vacancy} //http://localhost:3000/seat?vacancy={$vacancy}
+    }
+    await Seat.find(query)
     .then((data)=>{
         res.status(200).json({
             data: data

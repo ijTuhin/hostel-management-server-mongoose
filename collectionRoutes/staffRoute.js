@@ -5,6 +5,11 @@ const staffSchema = require("../collectionSchemas/staffSchema.js");
 const Staff = new mongoose.model ("Staff", staffSchema);
 // GET
 router.get('/', async(req, res) => {
+    let query = {}
+    if(req.query.joining){
+        query = {joining: req.query.joining} //http://localhost:3000/staff?joining={$joining}
+    }
+
     await Staff.find({}) 
     .then((data)=>{
         res.status(200).json({
