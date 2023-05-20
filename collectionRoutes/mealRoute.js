@@ -62,9 +62,7 @@ router.delete('/:id', async(req, res) => {
 router.get('/:id', async(req, res) => {
     await Meal.find({_id: req.params.id})
     .then((data)=>{
-        res.status(200).json({
-            data: data
-        })
+        res.status(200).json(data)
     })
     .catch(()=>{
         res.status(400).json({
@@ -77,19 +75,17 @@ router.get('/:id', async(req, res) => {
 router.get('/', async(req, res) => {
     let query = {};
     if(req.query.date && req.query.meal && req.query.status){
-        query = {meal: req.query.meal, date: req.query.date, status: req.query.status} //http://localhost:3001/meal?meal={$meal}&date={$date}&status={$status}
+        query = {meal: req.query.meal, date: req.query.date, status: req.query.status} //http://localhost:3001/meal?meal=${meal}&date=${date}&status=${status}
     }
     else if(req.query.meal){
-        query = {meal: req.query.meal} //http://localhost:3001/meal?meal={$meal}
+        query = {meal: req.query.meal} //http://localhost:3001/meal?meal=${meal}
     }
     else if(req.query.date){
-        query = {date: req.query.date} //http://localhost:3001/meal?date={$date}
+        query = {date: req.query.date} //http://localhost:3001/meal?date=${date}
     }
     await Meal.find(query)
     .then((data)=>{
-        res.status(200).json({
-            data: data
-        })
+        res.status(200).json(data)
     })
     .catch(()=>{
         res.status(400).json({

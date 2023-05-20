@@ -5,20 +5,18 @@ const utilitySchema = require("../collectionSchemas/utilitySchema")
 const Utility = new mongoose.model("Utility", utilitySchema)
 
 
-// GET by month http://localhost:3001/utility?month={$month}
+// GET by month http://localhost:3001/utility?month=${month}
 router.get('/', async(req, res) => {
     let query = {}
     if(req.query.month){
-        query = {month:req.query.month} // http://localhost:3001/attendance?month={$month}
+        query = {month:req.query.month} // http://localhost:3001/utility?month=${month}
     }
     else if(req.query.name){
-        query = {name:req.query.name} // http://localhost:3001/attendance?name={$name}
+        query = {name:req.query.name} // http://localhost:3001/utility?name=${name}
     }
     await Utility.find(query) 
     .then((data)=>{
-        res.status(200).json({
-            data: data
-        })
+        res.status(200).json(data)
     })
     .catch(()=>{
         res.status(400).json({
@@ -32,9 +30,7 @@ router.get('/', async(req, res) => {
 router.get('/:id', async(req, res) => {
     await Utility.find({_id: req.params.id})
     .then((data)=>{
-        res.status(200).json({
-            data: data
-        })
+        res.status(200).json(data)
     })
     .catch(()=>{
         res.status(400).json({

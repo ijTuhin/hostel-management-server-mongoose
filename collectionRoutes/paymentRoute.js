@@ -25,9 +25,7 @@ router.post('/', async(req, res) => {
 router.get('/:id', async(req, res) => {
     await Payment.find({_id: req.params.id})
     .then((data)=>{
-        res.status(200).json({
-            data: data
-        })
+        res.status(200).json(data)
     })
     .catch(()=>{
         res.status(400).json({
@@ -42,7 +40,13 @@ router.get('/:id', async(req, res) => {
 
 router.get('/', async(req, res) => {
     let query = {};
-    if(req.query.item){
+    if(req.query.month && req.query.item){
+        query = {
+            item: req.query.item,
+            month: req.query.month
+        }
+    }
+    else if(req.query.item){
         query = {
             item: req.query.item
         }
@@ -51,9 +55,7 @@ router.get('/', async(req, res) => {
     // else if(req.query.user && req.query.item) for user payment record
     await Payment.find(query)
     .then((data)=>{
-        res.status(200).json({
-            data: data
-        })
+        res.status(200).json(data)
     })
     .catch(()=>{
         res.status(400).json({
@@ -67,9 +69,7 @@ router.get('/', async(req, res) => {
 router.get('/', async(req, res) => {
     await Payment.find({})
     .then((data)=>{
-        res.status(200).json({
-            data: data
-        })
+        res.status(200).json(data)
     })
     .catch(()=>{
         res.status(400).json({

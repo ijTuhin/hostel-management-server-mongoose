@@ -6,23 +6,36 @@ const User = new mongoose.model ("User", userSchema);
 // GET
 router.get('/', async(req, res) => {
     let query = {}
-    if(req.body.sem){
-        query = {sem: req.query.sem} //http://localhost:3001/user?sem={$sem}
+    if(req.query.sem){
+        query = {sem: req.query.sem} //http://localhost:3001/user?sem=${sem}
     }
-    else if(req.body.enroll){
-        query = {enroll: req.query.enroll} //http://localhost:3001/user?enroll={$enroll}
+    else if(req.query.enroll){
+        query = {enroll: req.query.enroll} //http://localhost:3001/user?enroll=${enroll}
     }
-    else if( req.query.month && req.query.meal){
-        query = {month: req.query.month, meal: req.query.mea} //http://localhost:3001/salary?month={$month}&meal={$meal}
+    else if(req.query.meal){
+        query = {meal: req.query.meal} //http://localhost:3001/user?meal=${meal}
     }
-    else if( req.query.month && req.query.rent){
-        query = {month: req.query.month, rent: req.query.mea} //http://localhost:3001/salary?month={$month}&rent={$rent}
+    else if(req.query.rent){
+        query = {rent: req.query.rent} //http://localhost:3001/user?rent=${rent}
     }
     await User.find(query) 
     .then((data)=>{
-        res.status(200).json({
-            data: data
+        res.status(200).json(data)
+    })
+    .catch((err)=>{
+        console.error(err)
+        res.status(400).json({
+            error: "Oops! Something went wrong!"
         })
+    })
+})
+
+// GET by rent & meal status
+router.get('/rent', async(req, res) => {
+    let query = {}
+    await User.find(query).select("matric dept room rent")
+    .then((data)=>{
+        res.status(200).json(data)
     })
     .catch(()=>{
         res.status(400).json({
@@ -30,14 +43,23 @@ router.get('/', async(req, res) => {
         })
     })
 })
-
+router.get('/meal', async(req, res) => {
+    let query = {}
+    await User.find(query).select("matric dept room meal")
+    .then((data)=>{
+        res.status(200).json(data)
+    })
+    .catch(()=>{
+        res.status(400).json({
+            error: "Oops! Something went wrong!"
+        })
+    })
+})
 // GET by Id
 router.get('/:id', async(req, res) => {
     await User.find({_id: req.params.id})
     .then((data)=>{
-        res.status(200).json({
-            data: data
-        })
+        res.status(200).json(data)
     })
     .catch(()=>{
         res.status(400).json({
@@ -66,7 +88,17 @@ router.post('/', async(req, res) => {
 
 // POST many
 router.post('/all', async(req, res) => {
-    
+    await User.insertMany(req.body)
+    .then(()=>{
+        res.status(200).json({
+            success: "Insertion successful"
+        })
+    })
+    .catch(()=>{
+        res.status(400).json({
+            error: "Oops! Something went wrong!"
+        })
+    }) 
 })
 
 

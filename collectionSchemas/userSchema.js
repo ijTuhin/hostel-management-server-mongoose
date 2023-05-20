@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const date = new Date().toLocaleDateString();
 const userSchema = mongoose.Schema({
   name: String,
   phone: String,
@@ -16,12 +17,21 @@ const userSchema = mongoose.Schema({
   last: String,
   room: String,
   enroll: {
-    type: Date,
-    default: Date.now,
+    type: String,
+    default: date,
   },
-  meal: Boolean,
-  rent: Boolean,
-  coupon: Number,
+  meal: {
+    type:Boolean,
+    default: false
+  },
+  rent: {
+    type:Boolean,
+    default: false
+  },
+  coupon: {
+    type: Number,
+    default: 0
+  },
 });
 
 module.exports = userSchema;

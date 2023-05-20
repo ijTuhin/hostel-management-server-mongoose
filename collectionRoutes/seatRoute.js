@@ -8,13 +8,11 @@ const Seat = new mongoose.model ("Seat", seatSchema);
 router.get('/', async(req, res) => {
     let query = {}
     if(req.query.vacancy){
-        query = {vacancy: req.query.vacancy} //http://localhost:3001/seat?vacancy={$vacancy}
+        query = {vacancy: req.query.vacancy} //http://localhost:3001/seat?vacancy=${vacancy}
     }
     await Seat.find(query)
     .then((data)=>{
-        res.status(200).json({
-            data: data
-        })
+        res.status(200).json(data)
     })
     .catch(()=>{
         res.status(400).json({
@@ -28,9 +26,7 @@ router.get('/', async(req, res) => {
 router.get('/:room', async(req, res) => {
     await Seat.find({room: req.params.room})
     .then((data)=>{
-        res.status(200).json({
-            data: data
-        })
+        res.status(200).json(data)
     })
     .catch(()=>{
         res.status(400).json({
@@ -50,9 +46,7 @@ router.get('/:member', async(req, res) => {
         __v: 0
     }) // To get all data, remove the select
     .then((data)=>{
-        res.status(200).json({
-            data: data
-        })
+        res.status(200).json(data)
     })
     .catch(()=>{
         res.status(400).json({

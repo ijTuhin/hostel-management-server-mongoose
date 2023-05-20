@@ -7,14 +7,12 @@ const Staff = new mongoose.model ("Staff", staffSchema);
 router.get('/', async(req, res) => {
     let query = {}
     if(req.query.joining){
-        query = {joining: req.query.joining} //http://localhost:3001/staff?joining={$joining}
+        query = {joining: req.query.joining} //http://localhost:3001/staff?joining=${joining}
     }
 
     await Staff.find({}) 
     .then((data)=>{
-        res.status(200).json({
-            data: data
-        })
+        res.status(200).json(data)
     })
     .catch(()=>{
         res.status(400).json({
@@ -27,9 +25,7 @@ router.get('/', async(req, res) => {
 router.get('/:id', async(req, res) => {
     await Staff.find({_id: req.params.id})
     .then((data)=>{
-        res.status(200).json({
-            data: data
-        })
+        res.status(200).json(data)
     })
     .catch(()=>{
         res.status(400).json({
