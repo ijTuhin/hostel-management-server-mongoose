@@ -31,6 +31,19 @@ router.get('/', async(req, res) => {
 })
 
 // GET by rent & meal status
+router.get('/data', async(req, res) => {
+    let query = {}
+    await User.find(query).select("matric name enroll sem dept room")
+    .then((data)=>{
+        res.status(200).json(data)
+    })
+    .catch(()=>{
+        res.status(400).json({
+            error: "Oops! Something went wrong!"
+        })
+    })
+})
+// GET by rent & meal status
 router.get('/rent', async(req, res) => {
     let query = {}
     await User.find(query).select("matric dept room rent")
