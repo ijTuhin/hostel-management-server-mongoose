@@ -7,7 +7,7 @@ const Staff = new mongoose.model ("Staff", staffSchema);
 router.get('/', async(req, res) => {
     let query = {}
     if(req.query.joining){
-        query = {joining: req.query.joining} //http://localhost:3000/staff?joining={$joining}
+        query = {joining: req.query.joining} //http://localhost:3001/staff?joining={$joining}
     }
 
     await Staff.find({}) 

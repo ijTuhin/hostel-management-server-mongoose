@@ -7,16 +7,16 @@ const User = new mongoose.model ("User", userSchema);
 router.get('/', async(req, res) => {
     let query = {}
     if(req.body.sem){
-        query = {sem: req.query.sem} //http://localhost:3000/user?sem={$sem}
+        query = {sem: req.query.sem} //http://localhost:3001/user?sem={$sem}
     }
     else if(req.body.enroll){
-        query = {enroll: req.query.enroll} //http://localhost:3000/user?enroll={$enroll}
+        query = {enroll: req.query.enroll} //http://localhost:3001/user?enroll={$enroll}
     }
     else if( req.query.month && req.query.meal){
-        query = {month: req.query.month, meal: req.query.mea} //http://localhost:3000/salary?month={$month}&meal={$meal}
+        query = {month: req.query.month, meal: req.query.mea} //http://localhost:3001/salary?month={$month}&meal={$meal}
     }
     else if( req.query.month && req.query.rent){
-        query = {month: req.query.month, rent: req.query.mea} //http://localhost:3000/salary?month={$month}&rent={$rent}
+        query = {month: req.query.month, rent: req.query.mea} //http://localhost:3001/salary?month={$month}&rent={$rent}
     }
     await User.find(query) 
     .then((data)=>{

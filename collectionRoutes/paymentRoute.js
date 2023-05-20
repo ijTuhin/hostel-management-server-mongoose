@@ -37,8 +37,8 @@ router.get('/:id', async(req, res) => {
 })
 
 
-// GET meal payment http://localhost:3000/payment?item=meal
-// GET rent payment http://localhost:3000/payment?item=rent
+// GET meal payment http://localhost:3001/payment?item=meal
+// GET rent payment http://localhost:3001/payment?item=rent
 
 router.get('/', async(req, res) => {
     let query = {};

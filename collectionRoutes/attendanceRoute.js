@@ -59,7 +59,7 @@ router.get('/:id', async(req, res) => {
 router.get('/', async(req, res) => {
     let query = {}
     if(req.query.date){
-        query = {date: req.query.date} // http://localhost:3000/attendance?date={$date}
+        query = {date: req.query.date} // http://localhost:3001/attendance?date={$date}
     }
     await Attendance.find(query)
     .then((data)=>{

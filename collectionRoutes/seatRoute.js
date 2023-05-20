@@ -8,7 +8,7 @@ const Seat = new mongoose.model ("Seat", seatSchema);
 router.get('/', async(req, res) => {
     let query = {}
     if(req.query.vacancy){
-        query = {vacancy: req.query.vacancy} //http://localhost:3000/seat?vacancy={$vacancy}
+        query = {vacancy: req.query.vacancy} //http://localhost:3001/seat?vacancy={$vacancy}
     }
     await Seat.find(query)
     .then((data)=>{

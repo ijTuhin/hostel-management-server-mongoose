@@ -38,6 +38,6 @@ app.use('/utility', utilityRoute)
 app.use('/staff', staffRoute)
 app.use('/salary', salaryRoute)
 
-app.listen(3000, () => {
+app.listen(3001, () => {
   console.log("Mongoose Server running");
 });

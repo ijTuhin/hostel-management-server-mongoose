@@ -7,10 +7,10 @@ const Salary = new mongoose.model ("Salary", salarySchema);
 router.get('/', async(req, res) => {
     let query = {}
     if(req.query.month){
-        query = {month: req.query.month} //http://localhost:3000/salary?month={$month}
+        query = {month: req.query.month} //http://localhost:3001/salary?month={$month}
     }
     else if(req.query.date){
-        query = {date: req.query.date} //http://localhost:3000/salary?date={$date}
+        query = {date: req.query.date} //http://localhost:3001/salary?date={$date}
     }
     // else if(req.query.staff) for staff record
     await Salary.find(query) 
