@@ -6,16 +6,21 @@ const userSchema = mongoose.Schema({
   address: String,
   district: String,
   thana: String,
-  gsuit: String,
+  email: String,
   matric: {
     type: String,
     required: true,
   },
+  password: String,
   sem: String,
   dept: String,
+  program: String,
   current: String,
   last: String,
-  room: String,
+  room: {
+    type: String,
+    default: "0",
+  },
   enroll: {
     type: String,
     default: date,
