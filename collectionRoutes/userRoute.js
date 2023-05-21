@@ -131,7 +131,7 @@ router.post("/login", async (req, res) => {
         );
 
         res.status(200).json({
-          access_token: token,
+          token: token,
           message: "Login Successful",
         });
       }
