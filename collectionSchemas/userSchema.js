@@ -6,11 +6,8 @@ const userSchema = mongoose.Schema({
   address: String,
   district: String,
   thana: String,
+  matric: String,
   email: String,
-  matric: {
-    type: String,
-    required: true,
-  },
   password: String,
   sem: String,
   dept: String,
@@ -37,6 +34,12 @@ const userSchema = mongoose.Schema({
     type: Number,
     default: 0
   },
+  payments: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Payment"
+    }
+  ]
 });
 
 module.exports = userSchema;

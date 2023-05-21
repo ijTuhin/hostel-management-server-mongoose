@@ -82,7 +82,22 @@ router.get("/:id", async (req, res) => {
     });
 });
 
-// POST
+// GET user payment records by ID
+router.get("/payments/:id", async (req, res) => {
+  await User.find({ _id: req.params.id })
+  .populate("payments")
+    .select("matric dept room rent")
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch(() => {
+      res.status(400).json({
+        error: "Oops! Something went wrong!",
+      });
+    });
+});
+
+// User SIGN-UP & LOG IN
 router.post("/signup", async (req, res) => {
   const newUser = new User(req.body);
   await newUser
@@ -143,7 +158,7 @@ router.post("/data-entry", async (req, res) => {
     });
 });
 
-// PUT
+// UPDATE by Id
 router.put("/:id", async (req, res) => {
   await User.updateOne(
     { _id: req.params.id },
