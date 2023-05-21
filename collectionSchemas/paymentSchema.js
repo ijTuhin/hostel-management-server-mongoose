@@ -15,10 +15,10 @@ const paymentSchema = mongoose.Schema({
     type: String,
     default: month[m],
   },
-  /* user: {
+  user: {
     type: mongoose.Types.ObjectId,
     ref: "User"
-  } */
+  }
 });
 
 module.exports = paymentSchema;

@@ -111,7 +111,7 @@ router.post("/login", async (req, res) => {
           },
           process.env.SECRET_JWT_TOKEN,
           {
-            expiresIn: "3h",
+            expiresIn: "1h",
           }
         );
 
@@ -120,23 +120,12 @@ router.post("/login", async (req, res) => {
           message: "Login Successful",
         });
       }
+      else res.status(401).json("Authentication Failed");
     }
+    else res.status(401).json("Authentication Failed");
   } catch {
     res.status(401).json("Authentication Failed");
   }
-  /* const newUser = new User(req.body);
-    await newUser
-    .save()
-    .then(()=>{
-        res.status(200).json({
-            error: "Insertion successful"
-        })
-    })
-    .catch(()=>{
-        res.status(400).json({
-            error: "Oops! Something went wrong!"
-        })
-    }) */
 });
 
 // POST many

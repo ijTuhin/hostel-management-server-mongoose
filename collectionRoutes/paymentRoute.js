@@ -2,11 +2,16 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 const paymentSchema = require("../collectionSchemas/paymentSchema.js")
+const checkLogin = require("../Authentications/checkLogin.js")
 const Payment = new mongoose.model("Payment", paymentSchema)
 
 // POST new payment
-router.post('/', async(req, res) => {
-    const newPayment = new Payment(req.body);
+router.post('/', checkLogin, async(req, res) => {
+    const newPayment = new Payment({
+        ...req.body,
+        user: req.userId
+    });
+    console.log(newPayment)
     await newPayment
     .save()
     .then(()=>{
@@ -22,7 +27,7 @@ router.post('/', async(req, res) => {
 })
 
 // GET by payment id
-router.get('/:id', async(req, res) => {
+router.get('/:id', checkLogin, async(req, res) => {
     await Payment.find({_id: req.params.id})
     .then((data)=>{
         res.status(200).json(data)
@@ -38,7 +43,7 @@ router.get('/:id', async(req, res) => {
 // GET meal payment http://localhost:3001/payment?item=meal
 // GET rent payment http://localhost:3001/payment?item=rent
 
-router.get('/', async(req, res) => {
+router.get('/', checkLogin, async(req, res) => {
     let query = {};
     if(req.query.month && req.query.item){
         query = {
@@ -51,9 +56,8 @@ router.get('/', async(req, res) => {
             item: req.query.item
         }
     }
-
-    // else if(req.query.user && req.query.item) for user payment record
     await Payment.find(query)
+    .populate("user", "matric dept room")
     .then((data)=>{
         res.status(200).json(data)
     })
@@ -66,7 +70,8 @@ router.get('/', async(req, res) => {
 
 
 // GET all
-router.get('/', async(req, res) => {
+router.get('/', checkLogin, async(req, res) => {
+    console.log("Email: ", req.email)
     await Payment.find({})
     .then((data)=>{
         res.status(200).json(data)
@@ -80,7 +85,7 @@ router.get('/', async(req, res) => {
 
 
 // DELETE by ID
-router.delete('/:id', async(req, res) => {
+router.delete('/:id', checkLogin, async(req, res) => {
     await Payment.deleteOne({_id: req.params.id})
     .then(()=>{
         res.status(200).json({
@@ -96,7 +101,7 @@ router.delete('/:id', async(req, res) => {
 
 
 // GET by user ID who made payment
-router.get('/user', async(req, res) => {
+router.get('/user', checkLogin, async(req, res) => {
     //
 })
 
