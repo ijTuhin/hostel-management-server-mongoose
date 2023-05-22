@@ -4,13 +4,14 @@ const router = express.Router();
 const seatSchema = require("../collectionSchemas/seatSchema.js");
 const Seat = new mongoose.model ("Seat", seatSchema);
 
-// GET all
+// GET all room details
 router.get('/', async(req, res) => {
     let query = {}
     if(req.query.vacancy){
         query = {vacancy: req.query.vacancy} //http://localhost:3001/seat?vacancy=${vacancy}
     }
     await Seat.find(query)
+    .populate("member", "matric name dept sem")
     .then((data)=>{
         res.status(200).json(data)
     })
@@ -22,9 +23,10 @@ router.get('/', async(req, res) => {
 })
 
 
-// GET by room number
-router.get('/:room', async(req, res) => {
-    await Seat.find({room: req.params.room})
+// GET room details
+router.get('/:id', async(req, res) => {
+    await Seat.find({_id: req.params.id})
+    .populate("member", "matric name dept sem")
     .then((data)=>{
         res.status(200).json(data)
     })
@@ -37,7 +39,7 @@ router.get('/:room', async(req, res) => {
 
 
 // GET room number by member id
-router.get('/:member', async(req, res) => {
+/* router.get('/:member', async(req, res) => {
     await Seat.find({member: { $in: [ req.params.member ] } })
     .select({
         member: 0,
@@ -53,7 +55,7 @@ router.get('/:member', async(req, res) => {
             error: "Oops! Something went wrong!"
         })
     })
-})
+}) */
 
 
 // Add new room

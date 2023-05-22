@@ -1,14 +1,15 @@
 const mongoose = require("mongoose");
 const seatSchema = mongoose.Schema({
-  room: String,
+  room: Number,
   member: [
     {
-      type: String,
-      validate: {
+      type: mongoose.Types.ObjectId,
+      ref: "User",
+      /* validate: {
         validator: function () {
           return !(this.member.length > 6);
         },
-      },
+      }, */
       /* default: function () {
         if (this.member.length < 6) {
           return true;

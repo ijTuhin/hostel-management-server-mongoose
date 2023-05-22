@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 const userSchema = require("../collectionSchemas/userSchema.js");
 const User = new mongoose.model("User", userSchema);
+const seatSchema = require("../collectionSchemas/seatSchema.js");
+const Seat = new mongoose.model("Seat", seatSchema);
 // GET
 router.get("/", async (req, res) => {
   let query = {};
@@ -28,7 +30,7 @@ router.get("/", async (req, res) => {
     });
 });
 
-// GET by rent & meal status
+// GET all with academic data
 router.get("/data", async (req, res) => {
   let query = {};
   await User.find(query)
@@ -42,7 +44,8 @@ router.get("/data", async (req, res) => {
       });
     });
 });
-// GET by rent & meal status
+
+// GET all rent & meal status
 router.get("/rent", async (req, res) => {
   let query = {};
   await User.find(query)
@@ -69,9 +72,12 @@ router.get("/meal", async (req, res) => {
       });
     });
 });
-// GET by Id
-router.get("/:id", async (req, res) => {
+
+// GET room by Id
+router.get("/room/:id", async (req, res) => {
   await User.find({ _id: req.params.id })
+  .populate("room", "room")
+  .select("matric dept room sem")
     .then((data) => {
       res.status(200).json(data);
     })
@@ -85,7 +91,7 @@ router.get("/:id", async (req, res) => {
 // GET user payment records by ID
 router.get("/payments/:id", async (req, res) => {
   await User.find({ _id: req.params.id })
-  .populate("payments")
+    .populate("payments")
     .select("matric dept room rent")
     .then((data) => {
       res.status(200).json(data);
@@ -134,10 +140,8 @@ router.post("/login", async (req, res) => {
           token: token,
           message: "Login Successful",
         });
-      }
-      else res.status(401).json("Authentication Failed");
-    }
-    else res.status(401).json("Authentication Failed");
+      } else res.status(401).json("Authentication Failed");
+    } else res.status(401).json("Authentication Failed");
   } catch {
     res.status(401).json("Authentication Failed");
   }
@@ -158,24 +162,28 @@ router.post("/data-entry", async (req, res) => {
     });
 });
 
-// UPDATE by Id
-router.put("/:id", async (req, res) => {
+// UPDATE user room no. by Id
+router.put("/update-room/:id", async (req, res) => {
+  const vacant = req.body.vacant - 1;
   await User.updateOne(
     { _id: req.params.id },
+    { $set: { room: req.body.room } }
+  );
+  await Seat.updateOne(
+    { room: req.body.room },
     {
-      $set: {
-        address: req.body.address,
-      },
+      $push: { member: req.params.id },
+      $set: { vacant: vacant },
     }
   )
     .then(() => {
       res.status(200).json({
-        result: "Data update successful",
+        result: "Room allocation successful",
       });
     })
     .catch(() => {
       res.status(400).json({
-        error: "Oops! Something went wrong!",
+        error: "Oops! Could not update seat!",
       });
     });
 });

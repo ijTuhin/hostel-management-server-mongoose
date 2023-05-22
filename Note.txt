@@ -4,3 +4,5 @@ https://www.mongodb.com/docs/manual/reference/operator/update/
 3. add a value to an array unless the value is already present, in which case does nothing to that array $addToSet
 4. for utility Update operation $[<identifier>]
 5. 
+
+c213256, e213246, c201252, p223236, c211203, eb191259

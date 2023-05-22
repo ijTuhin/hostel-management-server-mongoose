@@ -15,8 +15,8 @@ const userSchema = mongoose.Schema({
   current: String,
   last: String,
   room: {
-    type: String,
-    default: "0",
+    type: mongoose.Types.ObjectId,
+    ref: "Seat",
   },
   enroll: {
     type: String,
