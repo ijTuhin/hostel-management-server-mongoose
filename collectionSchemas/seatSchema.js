@@ -5,11 +5,11 @@ const seatSchema = mongoose.Schema({
     {
       type: mongoose.Types.ObjectId,
       ref: "User",
-      /* validate: {
+      validate: {
         validator: function () {
           return !(this.member.length > 6);
         },
-      }, */
+      },
       /* default: function () {
         if (this.member.length < 6) {
           return true;
