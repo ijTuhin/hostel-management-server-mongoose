@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const date = /* new Date().toJSON().slice(0,10).split('-').reverse().join('-');  */new Date().toLocaleDateString();
+const date = new Date().toLocaleDateString();
 const time = new Date().toLocaleTimeString();
 const attendanceSchema = mongoose.Schema({
     date: {

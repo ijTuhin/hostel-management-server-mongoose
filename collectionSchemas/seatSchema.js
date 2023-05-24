@@ -10,12 +10,6 @@ const seatSchema = mongoose.Schema({
           return !(this.member.length > 6);
         },
       },
-      /* default: function () {
-        if (this.member.length < 6) {
-          return true;
-        }
-        return false;
-      }, */
     },
   ],
   vacant: {

@@ -3,94 +3,62 @@ const mongoose = require("mongoose");
 const router = express.Router();
 const staffSchema = require("../collectionSchemas/staffSchema.js");
 const Staff = new mongoose.model ("Staff", staffSchema);
-// GET
+const salarySchema = require("../collectionSchemas/salarySchema.js");
+const Salary = new mongoose.model ("Salary", salarySchema);
+// GET all by query
 router.get('/', async(req, res) => {
     let query = {}
-    if(req.query.joining){
-        query = {joining: req.query.joining} //http://localhost:3001/staff?joining=${joining}
+    if(req.query.joining){ query = {joining: req.query.joining} }
+    else if(req.query.position){ query = {position: req.query.position} }
+    else if(req.query.joining && req.query.position){
+        query = {
+            joining: req.query.joining,
+            position: req.query.position
+        }
     }
-
     await Staff.find({}) 
-    .then((data)=>{
-        res.status(200).json(data)
-    })
-    .catch(()=>{
-        res.status(400).json({
-            error: "Oops! Something went wrong!"
-        })
-    })
+    .then((data)=>{res.json(data)})
+    .catch(()=>{res.json("Oops! Something went wrong!")})
 })
 
-// GET by Id
+// GET staff data by Id
 router.get('/:id', async(req, res) => {
-    await Staff.find({_id: req.params.id})
-    .then((data)=>{
-        res.status(200).json(data)
-    })
-    .catch(()=>{
-        res.status(400).json({
-            error: "Oops! Something went wrong!"
-        })
-    })
+    await Staff.findOne({_id: req.params.id})
+    .then((data)=>{res.json(data)})
+    .catch(()=>{res.json("Oops! Something went wrong!")})
 })
 
 
-// POST
+// POST new staff record
 router.post('/', async(req, res) => {
     const newStaff = new Staff(req.body);
     await newStaff
     .save()
-    .then(()=>{
-        res.status(200).json({
-            error: "Insertion successful"
-        })
-    })
-    .catch(()=>{
-        res.status(400).json({
-            error: "Oops! Something went wrong!"
-        })
-    })
-})
-
-// POST many
-router.post('/all', async(req, res) => {
-    
+    .then(()=>{res.json("Data insertion successful")})
+    .catch(()=>{res.json("Oops! Something went wrong!")})
 })
 
 
-// PUT
+// UPDATE staff data
 router.put('/:id', async(req, res) => {
     await Staff.updateOne({_id: req.params.id}, {
         $set: {
-            address: req.body.address
+            name: req.body.name,
+            salary: req.body.salary,
+            position: req.body.position,
+            phone: req.body.phone
         }
     })
-    .then(()=>{
-        res.status(200).json({
-            result: "Data update successful"
-        })
-    })
-    .catch(()=>{
-        res.status(400).json({
-            error: "Oops! Something went wrong!"
-        })
-    })
+    .then(()=>{res.json("Data update successful")})
+    .catch(()=>{res.json("Oops! Something went wrong!")})
 })
 
 
-// DELETE
+// DELETE staff record by ID
 router.delete('/:id', async(req, res) => {
     await Staff.deleteOne({_id: req.params.id})
-    .then((data)=>{
-        res.status(200).json({
-            result: "Data deletion successful"
-        })
-    })
-    .catch(()=>{
-        res.status(400).json({
-            error: "Oops! Something went wrong!"
-        })
-    })
+    .then(()=>{res.json("Data deletion successful")})
+    .catch(()=>{res.json("Oops! Something went wrong!")})
 })
 
 module.exports = router;

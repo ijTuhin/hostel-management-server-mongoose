@@ -12,6 +12,10 @@ const salarySchema = mongoose.Schema({
     type: String,
     default: month[m],
   },
+  staff: {
+    type: mongoose.Types.ObjectId,
+    ref: "Staff",
+  }
 });
 
 module.exports = salarySchema;
