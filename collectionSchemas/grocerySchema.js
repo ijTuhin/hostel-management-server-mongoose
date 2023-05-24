@@ -1,7 +1,7 @@
 const mongoose = require("mongoose")
-const date = new Date().toLocaleDateString();
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-const month = months[new Date().getMonth()] + '-' + new Date().getFullYear()
+const month = months[new Date().getMonth()] + '-' + new Date().getFullYear();
+const date = new Date().toLocaleDateString();
 const grocerySchema = mongoose.Schema({
     month: {
         type: String,
@@ -10,7 +10,7 @@ const grocerySchema = mongoose.Schema({
     list: [
         {
             name: String,
-            amount: Number,
+            amount: String,
             price: Number,
             date: {
                 type: String,
