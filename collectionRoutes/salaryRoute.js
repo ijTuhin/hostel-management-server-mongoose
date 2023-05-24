@@ -3,7 +3,10 @@ const mongoose = require("mongoose");
 const router = express.Router();
 const salarySchema = require("../collectionSchemas/salarySchema.js");
 const Salary = new mongoose.model ("Salary", salarySchema);
-// GET
+const staffSchema = require("../collectionSchemas/staffSchema.js");
+const Staff = new mongoose.model ("Staff", staffSchema);
+
+// GET salary record by query
 router.get('/', async(req, res) => {
     let query = {}
     if(req.query.month){
@@ -12,10 +15,10 @@ router.get('/', async(req, res) => {
     else if(req.query.date){
         query = {date: req.query.date} //http://localhost:3001/salary?date=${date}
     }
-    // else if(req.query.staff) for staff record
-    await Salary.find(query) 
+    await Salary.find(query)
+    .populate("staff", "name position phone")
     .then((data)=>{
-        res.status(200).json(data)
+        res.json(data)
     })
     .catch(()=>{
         res.status(400).json({
@@ -24,9 +27,10 @@ router.get('/', async(req, res) => {
     })
 })
 
-// GET by Id
+// GET salary record by Id
 router.get('/:id', async(req, res) => {
-    await Salary.find({_id: req.params.id})
+    await Salary.findOne({_id: req.params.id})
+    .populate("staff", "name position phone")
     .then((data)=>{
         res.status(200).json(data)
     })
@@ -38,54 +42,28 @@ router.get('/:id', async(req, res) => {
 })
 
 
-// POST
-router.post('/', async(req, res) => {
-    const newSalary = new Salary(req.body);
-    await newSalary
-    .save()
-    .then(()=>{
-        res.status(200).json({
-            error: "Insertion successful"
-        })
-    })
-    .catch(()=>{
-        res.status(400).json({
-            error: "Oops! Something went wrong!"
-        })
-    })
-})
-
-// POST many
-router.post('/all', async(req, res) => {
-    
+// POST salary by staff ID
+router.post('/:id', async(req, res) => {
+    const staffSalary = await Staff.findOne({_id: req.params.id}).select("salary");
+    const newSalary = await new Salary({
+        salary: staffSalary.salary,
+        staff: req.params.id
+    }).save();
+    await Staff.updateOne(
+        {_id: req.params.id},
+        {$push: {
+            record: newSalary._id
+        }})
+    .then(()=>{res.json("Data insertion successful")})
+    .catch(()=>{res.json("Oops! Something went wrong!")})
 })
 
 
-// PUT
-router.put('/:id', async(req, res) => {
-    await Salary.updateOne({_id: req.params.id}, {
-        $set: {
-            address: req.body.address
-        }
-    })
-    .then(()=>{
-        res.status(200).json({
-            result: "Data update successful"
-        })
-    })
-    .catch(()=>{
-        res.status(400).json({
-            error: "Oops! Something went wrong!"
-        })
-    })
-})
-
-
-// DELETE
+// DELETE salary record by ID
 router.delete('/:id', async(req, res) => {
     await Salary.deleteOne({_id: req.params.id})
-    .then((data)=>{
-        res.status(200).json({
+    .then(()=>{
+        res.json({
             result: "Data deletion successful"
         })
     })

@@ -17,13 +17,15 @@ router.get('/', async(req, res) => {
         }
     }
     await Staff.find({}) 
+    .populate("record", "date")
     .then((data)=>{res.json(data)})
     .catch(()=>{res.json("Oops! Something went wrong!")})
 })
 
 // GET staff data by Id
 router.get('/:id', async(req, res) => {
-    await Staff.findOne({_id: req.params.id})
+    await Staff.findOne({_id: req.params.id}) 
+    .populate("record", "date")
     .then((data)=>{res.json(data)})
     .catch(()=>{res.json("Oops! Something went wrong!")})
 })

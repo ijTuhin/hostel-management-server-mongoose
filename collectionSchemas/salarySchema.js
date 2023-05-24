@@ -1,20 +1,20 @@
 const mongoose = require("mongoose");
 const date = new Date().toLocaleDateString();
-const m = new Date().getMonth();
-const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+const month = months[new Date().getMonth()] + '-' + new Date().getFullYear();
 const salarySchema = mongoose.Schema({
-  amount: Number,
-  date: {
-    type: String,
-    default: date,
-  },
   month: {
     type: String,
-    default: month[m],
+    default: month,
+  },
+  salary: Number,
+  date: {
+      type: String,
+      default: date,
   },
   staff: {
-    type: mongoose.Types.ObjectId,
-    ref: "Staff",
+      type: mongoose.Types.ObjectId,
+      ref: "Staff",
   }
 });
 
