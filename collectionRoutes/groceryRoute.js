@@ -24,6 +24,22 @@ router.get("/", async (req, res) => {
     .catch(() => res.json("Please check the error!!"));
 });
 
+// GET total expense
+router.get("/total-expenses", async (req, res) => {
+  let cost = 0;
+  await Grocery.find({ month: req.query.month })
+    .select("list")
+    .then((data) => {
+      const items = data[0].list
+      items.map((data) => {
+        let total = data.price + cost;
+        cost = total;
+      });
+      res.json({ items, total: cost });
+    })
+    .catch(() => res.json("Please check the error!!"));
+});
+
 // Add new grocery items to current month list
 router.put("/list", async (req, res) => {
   await Grocery.updateOne(
