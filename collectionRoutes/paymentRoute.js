@@ -7,25 +7,6 @@ const Payment = new mongoose.model("Payment", paymentSchema);
 const userSchema = require("../collectionSchemas/userSchema.js");
 const User = new mongoose.model("User", userSchema);
 
-/* router.post('/', checkLogin, async(req, res) => {
-    const newPayment = new Payment({
-        ...req.body,
-        user: req.userId
-    });
-    console.log(newPayment)
-    await newPayment
-    .save()
-    .then(()=>{
-        res.status(200).json({
-            success: "Insertion successful"
-        })
-    })
-    .catch(()=>{
-        res.status(400).json({
-            error: "Oops! Something went wrong!"
-        })
-    })
-}) */
 // POST new payment and update in User collection
 router.post("/", checkLogin, async (req, res) => {
   if (req.body.item === "meal") {

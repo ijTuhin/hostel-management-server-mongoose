@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
-const m = new Date().getMonth();
-const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+const month = months[new Date().getMonth()] + '-' + new Date().getFullYear();
 const utilitySchema = mongoose.Schema({
     name: {
         type: String,
@@ -8,7 +8,7 @@ const utilitySchema = mongoose.Schema({
     },
     month: {
         type: String,
-        default: month[m]
+        default: month
     },
     status: {
         type: Number,
