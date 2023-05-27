@@ -12,16 +12,64 @@ const Salary = new mongoose.model ("Salary", salarySchema);
 const grocerySchema = require("../collectionSchemas/grocerySchema");
 const Grocery = new mongoose.model("Grocery", grocerySchema);
 
+// GET all data from Balance Sheet and UPDATE debit-credit
 router.get("/", async(req, res) => {
+    let query = {month: req.query.month}
+    let credit = 0
+    let debit = 0
     let salary = 0
-    await Salary.find({month: req.query.month}).select("salary")
-    .then((data)=>{data.map(i => salary = salary + i.salary)}); 
-    console.log(salary)
+    let meal = 0
+    let rent = 0
+    let grocery = 0
+    let utility = 0
+    let utilities = [];
 
-    /* await Payment.find({month: req.query.month}).select("salary")
-    .then((data)=>{data.map(i => salary = salary + i.salary)}); 
-    console.log(salary) */
+    await BalanceSheet.findOne(query)
+    .populate("mealBill", "bill")
+    .populate("seatRent", "bill")
+    .populate("salary", "salary")
+    .populate("utility", "name bill")
+    .populate("grocery", "cost")
+    .then((data)=> {
+        data.mealBill.map(i=>{ meal = meal + i.bill});
+        data.seatRent.map(i=>{ rent = rent + i.bill});
+        data.salary.map(i=>{ salary = salary + i.salary});
+        data.grocery.map(i=>{ grocery = grocery + i.cost});
+        data.utility.map(i=>{ 
+            utilities.push({
+                name: i.name,
+                bill: i.bill
+            });
+            utility = utility + i.bill});
+        credit = meal + rent;
+        debit = salary + grocery + utility;
+        res.json({
+            mealBill: meal,
+            seatRent: rent,
+            salary: salary,
+            grocery: grocery,
+            utilities: utilities,
+            utility: utility,
+            credit: credit,
+            debit: debit
+        })
+    })
+    .catch(()=> res.json("Error!!"));
+    await BalanceSheet.updateOne(query, {$set: {credit:credit, debit:debit}})
+})
 
+// Close Balance Sheet by Month
+router.put('/close', async (req, res) => {
+    await BalanceSheet.updateOne({month: req.query.month}, {$set: {status:0}})
+    .then(() => res.json("Balance Sheet Closed"))
+    .catch(() => res.json("error"))
+})
+
+// Create new Balance Sheet
+router.post('/', async (req, res) => {
+    await new BalanceSheet(req.body).save()
+    .then(() => res.json("created"))
+    .catch(() => res.json("error"))
 })
 
 

@@ -6,6 +6,8 @@ const paymentSchema = require("../collectionSchemas/paymentSchema.js");
 const Payment = new mongoose.model("Payment", paymentSchema);
 const userSchema = require("../collectionSchemas/userSchema.js");
 const User = new mongoose.model("User", userSchema);
+const balanceSheetSchema = require("../collectionSchemas/balanceSheetSchema.js");
+const BalanceSheet = new mongoose.model ("BalanceSheet", balanceSheetSchema);
 
 // POST new payment and update in User collection
 router.post("/", checkLogin, async (req, res) => {
@@ -26,6 +28,10 @@ router.post("/", checkLogin, async (req, res) => {
           meal: 1,
         },
       }
+    );
+    await BalanceSheet.updateOne(
+      { status: 1 },
+      {$push: {mealBill: payment._id,}}
     )
       .then(async () => {
         res.status(200).json({
@@ -54,6 +60,10 @@ router.post("/", checkLogin, async (req, res) => {
           rent: 1,
         },
       }
+    );
+    await BalanceSheet.updateOne(
+      { status: 1 },
+      {$push: {seatRent: payment._id,}}
     )
       .then(async () => {
         res.status(200).json({

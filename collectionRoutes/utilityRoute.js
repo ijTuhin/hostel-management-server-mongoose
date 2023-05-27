@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const router = express.Router();
 const utilitySchema = require("../collectionSchemas/utilitySchema")
 const Utility = new mongoose.model("Utility", utilitySchema)
+const balanceSheetSchema = require("../collectionSchemas/balanceSheetSchema.js");
+const BalanceSheet = new mongoose.model ("BalanceSheet", balanceSheetSchema);
 
 
 // GET by month http://localhost:3001/utility?month=${month}
@@ -91,13 +93,15 @@ router.put('/insert-bill/:id', async(req, res) => { // From Warden Panel
 })
 router.put('/pay-bill/:id', async(req, res) => { // From Finance Panel
     await Utility.updateOne({_id: req.params.id, status: 1}, {
-        $set: {
-            status: 0
-        }
-    })
+        $set: {status: 0}
+    });
+    await BalanceSheet.updateOne(
+        { status: 1 },
+        {$push: {utility: req.params.id,}}
+    )
     .then(()=>{
         res.status(200).json({
-            result: "Data update successful"
+            result: "Bill Paid"
         })
     })
     .catch(()=>{

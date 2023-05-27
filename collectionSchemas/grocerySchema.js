@@ -7,17 +7,14 @@ const grocerySchema = mongoose.Schema({
         type: String,
         default: month
     },
-    list: [
-        {
-            name: String,
-            amount: String,
-            price: Number,
-            date: {
-                type: String,
-                default: date
-            }
-        }
-    ]
+    name: String,
+    amount: String,
+    rate: Number,
+    cost: Number,
+    date: {
+        type: String,
+        default: date
+    }
 })
 
 

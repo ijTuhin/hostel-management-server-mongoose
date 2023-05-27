@@ -5,6 +5,8 @@ const salarySchema = require("../collectionSchemas/salarySchema.js");
 const Salary = new mongoose.model ("Salary", salarySchema);
 const staffSchema = require("../collectionSchemas/staffSchema.js");
 const Staff = new mongoose.model ("Staff", staffSchema);
+const balanceSheetSchema = require("../collectionSchemas/balanceSheetSchema.js");
+const BalanceSheet = new mongoose.model ("BalanceSheet", balanceSheetSchema);
 
 // GET salary record by query
 router.get('/', async(req, res) => {
@@ -53,7 +55,11 @@ router.post('/:id', async(req, res) => {
         {_id: req.params.id},
         {$push: {
             record: newSalary._id
-        }})
+        }});
+    await BalanceSheet.updateOne(
+        { status: 1 },
+        {$push: {salary: newSalary._id,}}
+    )
     .then(()=>{res.json("Data insertion successful")})
     .catch(()=>{res.json("Oops! Something went wrong!")})
 })

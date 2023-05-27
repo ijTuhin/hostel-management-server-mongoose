@@ -4,7 +4,7 @@ const month = months[new Date().getMonth()] + '-' + new Date().getFullYear();
 const utilitySchema = mongoose.Schema({
     name: {
         type: String,
-        enum: ["electricity", "groceries", "gas", "water", "wifi"]
+        enum: ["electricity", "gas", "water", "wifi"]
     },
     month: {
         type: String,
