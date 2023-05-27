@@ -45,6 +45,12 @@ const userSchema = mongoose.Schema({
       type: mongoose.Types.ObjectId,
       ref: "Meal"
     }
+  ],
+  attendance: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Attendance"
+    }
   ]
 });
 

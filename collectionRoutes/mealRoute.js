@@ -18,9 +18,9 @@ router.post('/', checkLogin, async(req, res) => {
         await User.updateOne(
             {_id: req.userId},
             {
+                $push:{orders: newMeal._id},
                 $set: {
-                    coupon: user.coupon - 1,
-                    orders: newMeal._id
+                    coupon: user.coupon - 1
                 }
             }
         )

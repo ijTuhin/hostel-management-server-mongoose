@@ -10,6 +10,10 @@ const attendanceSchema = mongoose.Schema({
         type: String,
         default: time
     },
+    user: {
+      type: mongoose.Types.ObjectId,
+      ref: "User"
+    }
 })
 
 
