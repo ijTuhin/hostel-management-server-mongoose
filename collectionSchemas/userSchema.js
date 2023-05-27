@@ -39,6 +39,12 @@ const userSchema = mongoose.Schema({
       type: mongoose.Types.ObjectId,
       ref: "Payment"
     }
+  ],
+  orders: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Meal"
+    }
   ]
 });
 

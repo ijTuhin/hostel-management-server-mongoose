@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const date = new Date().toLocaleDateString();  /* new Date().toJSON().slice(0,10).split('-').reverse().join('-'); */
+const date = new Date().toLocaleDateString();
 const time = new Date().toLocaleTimeString();
 const mealSchema = mongoose.Schema({
     meal: {
@@ -19,6 +19,10 @@ const mealSchema = mongoose.Schema({
         type: String,
         default: time
     },
+    user: {
+      type: mongoose.Types.ObjectId,
+      ref: "User"
+    }
 })
 
 
