@@ -10,40 +10,8 @@ const balanceSheetSchema = require("../collectionSchemas/balanceSheetSchema.js")
 const BalanceSheet = new mongoose.model ("BalanceSheet", balanceSheetSchema);
 
 // POST new payment and update in User collection
-router.post("/", checkLogin, async (req, res) => {
-  if (req.body.item === "meal") {
-    const newPayment = new Payment({
-      ...req.body,
-      user: req.userId,
-    });
-    console.log(newPayment);
-    const payment = await newPayment.save();
-    await User.updateOne(
-      { _id: req.userId, meal: 0 },
-      {
-        $push: {
-          payments: payment._id,
-        },
-        $set: {
-          meal: 1,
-        },
-      }
-    );
-    await BalanceSheet.updateOne(
-      { status: 1 },
-      {$push: {mealBill: payment._id,}}
-    )
-      .then(async () => {
-        res.status(200).json({
-          message: "Meal bill paid",
-        });
-      })
-      .catch(() => {
-        res.status(400).json({
-          error: "Oops! Something went wrong!",
-        });
-      });
-  } else if (req.body.item === "rent") {
+router.post("/rent", checkLogin, async (req, res) => {
+  if (req.body.item === "rent") {
     const newPayment = new Payment({
       ...req.body,
       user: req.userId,
