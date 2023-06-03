@@ -19,11 +19,11 @@ const utilitySchema = mongoose.Schema({
         type: Number,
         default: 0
     },
-    Due: {
+    due: {
         type: Number,
         default: 0
     },
-    Date: {
+    date: {
         type: String,
         default: "---"
     },

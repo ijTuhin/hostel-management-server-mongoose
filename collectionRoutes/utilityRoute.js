@@ -60,9 +60,9 @@ router.post('/', async(req, res) => {
 })
 router.post('/new', async(req, res) => {
     await Utility.insertMany(req.body)
-    .then(()=>{
+    .then((data)=>{
         res.status(200).json({
-            success: "Insertion successful"
+            data
         })
     })
     .catch(()=>{
@@ -118,9 +118,6 @@ module.exports = router;
 const value = [
     {status: 0,bill: 2000, name: "item1"},
     {status: 0,bill: 1200, name: "item2"},
-    {status: 1,bill: 2500, name: "item3"},
-    {status: 0,bill: 3001, name: "item4"},
-    {status: 1,bill: 4500, name: "item5"}
   ]
   const item = value.map(i => {
     const items = {
