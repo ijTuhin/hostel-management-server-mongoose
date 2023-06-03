@@ -47,7 +47,7 @@ router.post("/rent", checkLogin, async (req, res) => {
 });
 
 // GET by payment id
-router.get("/:id", checkLogin, async (req, res) => {
+router.get("/:id", async (req, res) => {
   await Payment.find({ _id: req.params.id })
     .then((data) => {
       res.status(200).json(data);
@@ -62,7 +62,7 @@ router.get("/:id", checkLogin, async (req, res) => {
 
 
 // GET payment according to query
-router.get("/", checkLogin, async (req, res) => {
+router.get("/", async (req, res) => {
   let query = {};
   if (req.query.month && req.query.item) {
     query = {
@@ -87,7 +87,7 @@ router.get("/", checkLogin, async (req, res) => {
 });
 
 // GET all
-router.get("/", checkLogin, async (req, res) => {
+router.get("/", async (req, res) => {
   console.log("Email: ", req.email);
   await Payment.find({})
     .then((data) => {
@@ -101,7 +101,7 @@ router.get("/", checkLogin, async (req, res) => {
 });
 
 // DELETE by ID
-router.delete("/:id", checkLogin, async (req, res) => {
+router.delete("/:id", async (req, res) => {
   await Payment.deleteOne({ _id: req.params.id })
     .then(() => {
       res.status(200).json({

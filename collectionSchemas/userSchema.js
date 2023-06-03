@@ -15,7 +15,7 @@ const userSchema = mongoose.Schema({
   current: String,
   last: String,
   room: {
-    type: mongoose.Types.ObjectId,
+    type: mongoose.Schema.Types.Number,
     ref: "Seat",
   },
   enroll: {

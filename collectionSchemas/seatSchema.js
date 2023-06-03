@@ -3,7 +3,7 @@ const seatSchema = mongoose.Schema({
   room: Number,
   member: [
     {
-      type: mongoose.Types.ObjectId,
+      type: mongoose.Schema.Types.String,
       ref: "User",
       validate: {
         validator: function () {

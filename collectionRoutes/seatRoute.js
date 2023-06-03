@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const router = express.Router();
 const seatSchema = require("../collectionSchemas/seatSchema.js");
 const Seat = new mongoose.model ("Seat", seatSchema);
+const userSchema = require("../collectionSchemas/userSchema.js");
+const User = new mongoose.model ("User", userSchema);
 
 // GET all room details
 router.get('/', async(req, res) => {
@@ -135,17 +137,21 @@ router.put('/:room/add-vacancy', async(req, res) => {
 
 // Add user to seat
 router.put('/:room/insert-user', async(req, res) => {
+    const vacant = await Seat.findOne({room: req.params.room})
     await Seat.updateOne({room: req.params.room}, {
+        $set:{vacant: vacant.vacant - 1},
         $push: {
             member: req.body.member
         }
     }
-    )
-    .then(()=>{
-        res.status(200).json({
-            result: "Data update successful"
+    );
+    await User.updateOne({matric: req.body.member},
+        {
+            $set:{
+                room: req.params.room
+            }
         })
-    })
+    .then(()=>res.json("Data update successful"))
     .catch(()=>{
         res.status(400).json({
             error: "Oops! Something went wrong!"
