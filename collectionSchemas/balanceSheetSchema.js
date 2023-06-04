@@ -41,8 +41,6 @@ const balanceSheetSchema = mongoose.Schema({
   ],
   utility: [
     {
-      /* name: String,
-      bill: Number */
       type: mongoose.Types.ObjectId,
       ref: "Utility",
     },

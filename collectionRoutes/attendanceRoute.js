@@ -44,7 +44,7 @@ router.get('/:id', checkLogin, async(req, res) => {
 
 
 // GET by Query 
-router.get('/', checkLogin, async(req, res) => {
+router.get('/', async(req, res) => {
     let query = {}
     if(req.query.date){
         query = {date: req.query.date} // http://localhost:3001/attendance?date=${date}

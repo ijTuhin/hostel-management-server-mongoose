@@ -74,6 +74,20 @@ router.get("/meal", async (req, res) => {
 });
 
 // GET room by Id
+router.get("/attendance", async (req, res) => {
+  await User.find({})
+  .populate("attendance", "date time")
+  .select("matric dept attendance room")
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch(() => {
+      res.status(400).json({
+        error: "Oops! Something went wrong!",
+      });
+    });
+});
+// GET room by Id
 router.get("/room/:id", async (req, res) => {
   await User.find({ _id: req.params.id })
   .populate("room", "room")
