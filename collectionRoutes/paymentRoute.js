@@ -75,7 +75,7 @@ router.get("/", async (req, res) => {
     };
   }
   await Payment.find(query)
-    .populate("user", "matric dept room")
+    .populate("user", "matric dept room meal rent")
     .then((data) => {
       res.status(200).json(data);
     })

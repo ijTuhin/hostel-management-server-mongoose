@@ -16,8 +16,8 @@ router.get('/', async(req, res) => {
             position: req.query.position
         }
     }
-    await Staff.find({}) 
-    .populate("record", "date")
+    await Staff.find(query) 
+    .populate("record", "date month")
     .then((data)=>{res.json(data)})
     .catch(()=>{res.json("Oops! Something went wrong!")})
 })

@@ -62,7 +62,7 @@ router.get("/rent", async (req, res) => {
 router.get("/meal", async (req, res) => {
   let query = {};
   await User.find(query)
-    .select("matric dept room meal")
+    .select("matric dept room meal coupon")
     .then((data) => {
       res.status(200).json(data);
     })
