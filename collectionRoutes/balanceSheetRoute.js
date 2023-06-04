@@ -58,19 +58,4 @@ router.get("/", async(req, res) => {
     await BalanceSheet.updateOne(query, {$set: {credit:credit, debit:debit}})
 })
 
-// Close Balance Sheet by Month
-router.put('/close', async (req, res) => {
-    await BalanceSheet.updateOne({month: req.query.month}, {$set: {status:0}})
-    .then(() => res.json("Balance Sheet Closed"))
-    .catch(() => res.json("error"))
-})
-
-// Create new Balance Sheet
-router.post('/', async (req, res) => {
-    await new BalanceSheet(req.body).save()
-    .then(() => res.json("created"))
-    .catch(() => res.json("error"))
-})
-
-
 module.exports = router
