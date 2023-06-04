@@ -1,3 +1,4 @@
+const { ObjectId } = require("mongodb");
 const mongoose = require("mongoose");
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 const month = months[new Date().getMonth()] + '-' + new Date().getFullYear();
@@ -20,8 +21,13 @@ const utilitySchema = mongoose.Schema({
         default: 0
     },
     due: {
-        type: Number,
-        default: 0
+        bill: {
+            type: Number,
+            default: 0
+        },
+        id: {
+            type: ObjectId
+        }
     },
     date: {
         type: String,
