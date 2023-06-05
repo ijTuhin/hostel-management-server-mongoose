@@ -8,13 +8,17 @@ const BalanceSheet = new mongoose.model("BalanceSheet", balanceSheetSchema);
 
 // POST new date record
 router.post("/", async (req, res) => {
-  const newGrocery = await new Grocery(req.body).save();
-  await BalanceSheet.updateOne(
-    { status: 1 },
-    { $push: { grocery: newGrocery._id } }
-  )
-    .then(() => res.json("New Grocery Bucket created"))
-    .catch(() => res.json("Please check the error!!"));
+  const record = await Grocery.find({ date: req.query.date });
+  if (!record.length) {
+    const newGrocery = await new Grocery(req.body).save();
+    await BalanceSheet.updateOne(
+      { status: 1 },
+      { $push: { grocery: newGrocery._id } }
+    )
+      .then((data) => res.json(data))
+      .catch(() => res.json("Please check the error!!"));
+  }
+  else res.json('record exists')
 });
 
 // GET all data or data by month or date
@@ -40,9 +44,9 @@ router.put("/", async (req, res) => {
   });
 
   let total = req.body.list.price;
-  data[0].list.map((i)=>{
+  data[0].list.map((i) => {
     total = total + i.price;
-  })
+  });
   const item = data[0].list.filter((i) => {
     if (i.name === name) return true;
   });
@@ -53,7 +57,7 @@ router.put("/", async (req, res) => {
         $set: {
           "list.$.amount": req.body.list.amount + item[0].amount,
           "list.$.price": req.body.list.price + item[0].price,
-          total
+          total,
         },
       }
     )
@@ -62,7 +66,7 @@ router.put("/", async (req, res) => {
   } else {
     await Grocery.updateOne(
       { date: req.query.date },
-      { $push: { list: req.body.list }, $set: {total} }
+      { $push: { list: req.body.list }, $set: { total } }
     )
       .then(() => res.json("New Grocery item added"))
       .catch(() => res.json("Please check the error!!3"));

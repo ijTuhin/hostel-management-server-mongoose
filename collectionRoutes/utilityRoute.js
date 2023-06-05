@@ -22,6 +22,7 @@ const months = [
 ];
 const m = new Date().getMonth();
 const previous = months[m - 1] + "-" + new Date().getFullYear();
+const month = months[m] + "-" + new Date().getFullYear();
 const date = new Date().toLocaleDateString();
 
 // GET by month http://localhost:3001/utility?month=${month}
@@ -56,39 +57,46 @@ router.get("/:id", async (req, res) => {
     });
 });
 
-// POST new Utility
+// POST new Utility record
 router.post("/", async (req, res) => {
-  const newUtility = new Utility(req.body);
-  await newUtility
-    .save()
-    .then(() => {
-      res.status(200).json({
-        success: "Insertion successful",
-      });
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
-      });
+  const current = await Utility.find({ month: month });
+  if (!current.length) {
+    const last = await Utility.find({ month: previous });
+    const value = last.map((i) => {
+      let items;
+      if (i.status) {
+        items = {
+          due: {
+            bill: i.status * i.bill,
+            id: i._id,
+          },
+          name: i.name,
+        };
+      } else {
+        items = {
+          name: i.name,
+        };
+      }
+      return items;
     });
-});
-router.post("/new", async (req, res) => {
-  await Utility.insertMany(req.body);
-  await new BalanceSheet(req.body).save();
-  await BalanceSheet.updateOne(
-    { month: previous, status: 1 },
-    { $set: { status: 0 } }
-  )
-    .then((data) => {
-      res.status(200).json({
-        data,
+    await Utility.insertMany(value);
+    await new BalanceSheet(req.body).save();
+    await BalanceSheet.updateOne(
+      { month: previous, status: 1 },
+      { $set: { status: 0 } }
+    )
+      .then((data) => {
+        res.status(200).json({
+          data,
+        });
+      })
+      .catch(() => {
+        res.status(400).json({
+          error: "Oops! Something went wrong!",
+        });
       });
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
-      });
-    });
+  }
+  else res.json("Record exists")
 });
 
 // UPDATE utility bill & status
@@ -105,29 +113,6 @@ router.put("/insert-bill/:id", async (req, res) => {
     .then(() => {
       res.status(200).json({
         result: "Data update successful",
-      });
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
-      });
-    });
-});
-router.put("/pay-bill/:id", async (req, res) => {
-  // From Finance Panel
-  await Utility.updateOne(
-    { _id: req.params.id, status: 1 },
-    {
-      $set: { status: 0 },
-    }
-  );
-  await BalanceSheet.updateOne(
-    { status: 1 },
-    { $push: { utility: req.params.id } }
-  )
-    .then(() => {
-      res.status(200).json({
-        result: "Bill Paid",
       });
     })
     .catch(() => {
@@ -170,18 +155,3 @@ router.put("/pay-due/:id", async (req, res) => {
 });
 
 module.exports = router;
-/* 
-============== To store Due to new from previous unpaid utility bill ===============
-const value = [
-    {status: 0,bill: 2000, name: "item1"},
-    {status: 0,bill: 1200, name: "item2"},
-  ]
-  const item = value.map(i => {
-    const items = {
-      due:i.status * i.bill,
-      name: i.name
-    }
-    console.log(i.status * i.bill)
-    return items;
-  })
-*/

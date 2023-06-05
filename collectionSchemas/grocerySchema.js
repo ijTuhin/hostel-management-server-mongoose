@@ -21,6 +21,7 @@ const grocerySchema = mongoose.Schema({
             amount: Number,
             price: Number,
             rate: Number,
+            unit: String,
         }
     ]
 })
