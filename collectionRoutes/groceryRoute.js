@@ -17,7 +17,7 @@ router.post("/", async (req, res) => {
     .catch(() => res.json("Please check the error!!"));
 });
 
-// GET all data or data by month
+// GET all data or data by month or date
 router.get("/", async (req, res) => {
   let query = {};
   if (req.query.month) {
@@ -25,7 +25,7 @@ router.get("/", async (req, res) => {
   } else if (req.query.date) {
     query = { date: req.query.date };
   }
-  await Grocery.findOne(query)
+  await Grocery.find(query)
     .then((data) => {
       res.json(data);
     })

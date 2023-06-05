@@ -29,12 +29,12 @@ router.get("/", async(req, res) => {
     .populate("seatRent", "bill")
     .populate("salary", "salary")
     .populate("utility", "name bill")
-    .populate("grocery", "cost")
+    .populate("grocery", "total")
     .then((data)=> {
         data.mealBill.map(i=>{ meal = meal + i.bill});
         data.seatRent.map(i=>{ rent = rent + i.bill});
         data.salary.map(i=>{ salary = salary + i.salary});
-        data.grocery.map(i=>{ grocery = grocery + i.cost});
+        data.grocery.map(i=>{ grocery = grocery + i.total});
         data.utility.map(i=>{ 
             utilities.push({
                 name: i.name,
