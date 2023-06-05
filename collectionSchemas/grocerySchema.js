@@ -20,6 +20,7 @@ const grocerySchema = mongoose.Schema({
             name: String,
             amount: Number,
             price: Number,
+            rate: Number,
         }
     ]
 })

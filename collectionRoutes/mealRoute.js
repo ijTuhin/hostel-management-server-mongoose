@@ -15,17 +15,33 @@ router.post('/', checkLogin, async(req, res) => {
             ...req.body,
             user: req.userId,
           }).save()
-        await User.updateOne(
-            {_id: req.userId},
-            {
-                $push:{orders: newMeal._id},
-                $set: {
-                    coupon: user.coupon - 1
+        if(user.coupon === 1){
+            await User.updateOne(
+                {_id: req.userId},
+                {
+                    $push:{orders: newMeal._id},
+                    $set: {
+                        coupon: user.coupon - 1,
+                        meal: 0
+                    }
                 }
-            }
-        )
-        .then(()=> res.json("Insertion successful"))
-        .catch(()=> res.json("Oops! Something went wrong!"))
+            )
+            .then(()=> res.json("Insertion successful"))
+            .catch(()=> res.json("Oops! Something went wrong!"))
+        }
+        else{
+            await User.updateOne(
+                {_id: req.userId},
+                {
+                    $push:{orders: newMeal._id},
+                    $set: {
+                        coupon: user.coupon - 1
+                    }
+                }
+            )
+            .then(()=> res.json("Insertion successful"))
+            .catch(()=> res.json("Oops! Something went wrong!"))
+        }
     }
     else {res.json("Please pay your meal bill. Thank You")}
 })
