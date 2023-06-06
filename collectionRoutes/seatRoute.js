@@ -72,24 +72,22 @@ router.post('/all', async(req, res) => {
 
 
 // Remove user from seat
-router.put('/:room/remove-user', async(req, res) => {
+router.put('/:room/remove/:matric', async(req, res) => {
     const vacant = await Seat.findOne({room: req.params.room})
     await Seat.updateOne({room: req.params.room}, {
         $set:{vacant: vacant.vacant + 1},
-        $push: {
-            member: req.body.member
+        $pull: {
+            member: { $in: [ req.params.matric ] }
         }
     }
     );
-    await Seat.updateOne({room: req.params.room}, {
-        $pull: {
-            member: { $in: [ req.body.member ] }
-        }
+    await User.updateOne({matric: req.params.matric}, {
+        $set:{room: 0}
     }
     )
     .then(()=>{
         res.status(200).json({
-            result: "Data update successful"
+            result: `${req.params.matric} removed from Room ${req.params.room}`
         })
     })
     .catch(()=>{

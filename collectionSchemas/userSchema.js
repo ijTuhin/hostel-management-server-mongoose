@@ -17,6 +17,7 @@ const userSchema = mongoose.Schema({
   room: {
     type: mongoose.Schema.Types.Number,
     ref: "Seat",
+    default: 0
   },
   enroll: {
     type: String,
