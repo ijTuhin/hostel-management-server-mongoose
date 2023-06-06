@@ -35,7 +35,7 @@ mongoose
 app.use('/user', userRoute)
 app.use('/seat', seatRoute)
 app.use('/payment', paymentRoute)
-app.use('/meal-order', mealRoute)
+app.use('/meal', mealRoute)
 app.use('/attendance', attendanceRoute)
 app.use('/utility', utilityRoute)
 app.use('/staff', staffRoute)
