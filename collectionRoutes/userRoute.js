@@ -29,6 +29,19 @@ router.get("/", async (req, res) => {
       });
     });
 });
+// GET
+router.get("/search", async (req, res) => {
+  await User.find({$or:[{ matric: req.query.matric }, { name: req.query.name }]})
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(400).json({
+        error: "Oops! Something went wrong!",
+      });
+    });
+});
 
 // GET all with academic data
 router.get("/data", async (req, res) => {
@@ -76,8 +89,8 @@ router.get("/meal", async (req, res) => {
 // GET room by Id
 router.get("/attendance", async (req, res) => {
   await User.find({})
-  .populate("attendance", "date time")
-  .select("matric dept attendance room")
+    .populate("attendance", "date time")
+    .select("matric dept attendance room")
     .then((data) => {
       res.status(200).json(data);
     })
@@ -90,8 +103,8 @@ router.get("/attendance", async (req, res) => {
 // GET room by Id
 router.get("/room/:id", async (req, res) => {
   await User.find({ _id: req.params.id })
-  .populate("room", "room")
-  .select("matric dept room sem")
+    .populate("room", "room")
+    .select("matric dept room sem")
     .then((data) => {
       res.status(200).json(data);
     })
