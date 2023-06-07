@@ -14,6 +14,10 @@ const userSchema = mongoose.Schema({
   program: String,
   current: String,
   last: String,
+  account: {
+    type: Boolean,
+    default: true,
+  },
   room: {
     type: mongoose.Schema.Types.Number,
     ref: "Seat",
