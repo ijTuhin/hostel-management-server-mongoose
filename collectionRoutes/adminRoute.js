@@ -22,7 +22,7 @@ router.post("/meal/signup", async (req, res) => {
     "Dec",
   ];
   const nextMonth =
-    months[new Date().getMonth() - 1] + "-" + new Date().getFullYear();
+    months[new Date().getMonth()] + "-" + new Date().getFullYear();
   const newAdmin = new Admin({
     ...req.body,
     role: "meal",
@@ -42,7 +42,7 @@ router.post("/meal/signup", async (req, res) => {
 });
 router.post("/meal/login", async (req, res) => {
   try {
-    const admin = await Admin.find({ email: req.body.email });
+    const admin = await Admin.find({ role:"meal", email: req.body.email, status: 1 });
     if (admin && admin.length > 0) {
       if (admin[0].status) {
         const token = jwt.sign(
