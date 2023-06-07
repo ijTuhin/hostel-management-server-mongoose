@@ -96,7 +96,7 @@ router.post("/", async (req, res) => {
         });
       });
   }
-  else res.json("Record exists")
+  else res.json("Utility Record exists")
 });
 
 // UPDATE utility bill & status

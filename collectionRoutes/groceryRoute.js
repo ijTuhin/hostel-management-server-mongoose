@@ -18,7 +18,7 @@ router.post("/", async (req, res) => {
       .then((data) => res.json(data))
       .catch(() => res.json("Please check the error!!"));
   }
-  else res.json('record exists')
+  else res.json('Grocery record exists')
 });
 
 // GET all data or data by month or date
@@ -44,10 +44,10 @@ router.put("/", async (req, res) => {
   });
 
   let total = req.body.list.price;
-  data[0].list.map((i) => {
+  data[0]?.list.map((i) => {
     total = total + i.price;
   });
-  const item = data[0].list.filter((i) => {
+  const item = data[0]?.list.filter((i) => {
     if (i.name === name) return true;
   });
   if (item.length) {
