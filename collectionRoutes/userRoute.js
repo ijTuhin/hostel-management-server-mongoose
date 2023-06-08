@@ -218,29 +218,21 @@ router.post("/data-entry", async (req, res) => {
 });
 
 // UPDATE user room no. by Id
-router.put("/update-room/:id", async (req, res) => {
-  const vacant = req.body.vacant - 1;
-  await User.updateOne(
-    { _id: req.params.id },
-    { $set: { room: req.body.room } }
-  );
-  await Seat.updateOne(
-    { room: req.body.room },
-    {
-      $push: { member: req.params.id },
-      $set: { vacant: vacant },
+router.put("/update/:id", async (req, res) => {
+  await User.updateOne({_id: req.params.id},{
+    $set:{
+      name: req.body.name,
+      password: req.body.password,
+      current: req.body.current,
+      sem: req.body.sem,
+      phone: req.body.phone,
+      district: req.body.district,
+      address: req.body.address,
+      thana: req.body.thana,
     }
-  )
-    .then(() => {
-      res.status(200).json({
-        result: "Room allocation successful",
-      });
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Could not update seat!",
-      });
-    });
+  })
+  .then(()=> res.json('Updated'))
+  .catch(()=> res.json('Could not Update'))
 });
 
 // DELETE
