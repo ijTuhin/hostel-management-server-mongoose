@@ -47,7 +47,7 @@ router.get("/search", async (req, res) => {
 router.get("/data", async (req, res) => {
   let query = {};
   await User.find(query)
-    .select("matric name enroll sem dept room")
+    .select("matric name enroll sem dept room email")
     .then((data) => {
       res.status(200).json(data);
     })

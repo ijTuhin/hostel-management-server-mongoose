@@ -6,7 +6,7 @@ const adminSchema = require("../collectionSchemas/adminSchema.js");
 const Admin = new mongoose.model("Admin", adminSchema);
 
 // Meal Manager SIGN-UP & LOG IN
-router.post("/meal/signup", async (req, res) => {
+router.post("/create-meal-manager", async (req, res) => {
   const months = [
     "Jan",
     "Feb",
@@ -21,18 +21,17 @@ router.post("/meal/signup", async (req, res) => {
     "Nov",
     "Dec",
   ];
-  const nextMonth =
-    months[new Date().getMonth()] + "-" + new Date().getFullYear();
-  const newAdmin = new Admin({
+  const month = months[new Date().getMonth()] + "-" + new Date().getFullYear();
+  await Admin.updateOne({ role: "meal", status: 1 }, { $set: { status: 0 } });
+  await new Admin({
     ...req.body,
     role: "meal",
-    month: nextMonth,
+    month: month,
     status: 1,
-  });
-  await newAdmin
+  })
     .save()
     .then(() => {
-      res.status(200).json("Insertion successful");
+      res.status(200).json("Meal Manager created");
     })
     .catch(() => {
       res.status(400).json({
@@ -42,7 +41,11 @@ router.post("/meal/signup", async (req, res) => {
 });
 router.post("/meal/login", async (req, res) => {
   try {
-    const admin = await Admin.find({ role:"meal", email: req.body.email, status: 1 });
+    const admin = await Admin.find({
+      role: "meal",
+      email: req.body.email,
+      status: 1,
+    });
     if (admin && admin.length > 0) {
       if (admin[0].status) {
         const token = jwt.sign(
