@@ -57,6 +57,7 @@ router.post("/meal/login", async (req, res) => {
         );
         res.status(200).json({
           token: token,
+          role: "meal",
           message: "Meal manager login Successful",
         });
       } else res.status(401).json("Authentication Failed");
@@ -98,6 +99,7 @@ router.post("/login", async (req, res) => {
 
         res.status(200).json({
           token: token,
+          role: admin[0].role,
           message: "Login Successful",
         });
       } else res.status(401).json("Authentication Failed");
