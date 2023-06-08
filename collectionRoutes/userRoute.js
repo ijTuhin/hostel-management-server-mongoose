@@ -29,9 +29,37 @@ router.get("/", async (req, res) => {
       });
     });
 });
+router.get("/update", async (req, res) => {
+  await User.findOne({ matric: req.query.matric })
+    .select({
+      enroll: 0,
+      meal: 0,
+      rent: 0,
+      email: 0,
+      matric: 0,
+      dept: 0,
+      room: 0,
+      coupon: 0,
+      payments: 0,
+      orders: 0,
+      attendance: 0,
+      __v: 0,
+    })
+    .then((data) => {
+      res.status(200).json(data);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(400).json({
+        error: "Oops! Something went wrong!",
+      });
+    });
+});
 // GET
 router.get("/search", async (req, res) => {
-  await User.find({$or:[{ matric: req.query.matric }, { name: req.query.name }]})
+  await User.find({
+    $or: [{ matric: req.query.matric }, { name: req.query.name }],
+  })
     .then((data) => {
       res.status(200).json(data);
     })
