@@ -9,7 +9,19 @@ const adminSchema = mongoose.Schema({
     enum: ['meal', 'warden', 'accountant']
   },
   status: Boolean,
-  month: String
+  month: String,
+  posted: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Notice"
+    }
+  ],
+  notice: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Notice"
+    }
+  ]
 });
 
 module.exports = adminSchema;

@@ -56,6 +56,12 @@ const userSchema = mongoose.Schema({
       type: mongoose.Types.ObjectId,
       ref: "Attendance"
     }
+  ],
+  notice: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Notice"
+    }
   ]
 });
 

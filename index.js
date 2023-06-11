@@ -13,6 +13,7 @@ const groceryRoute = require("./collectionRoutes/groceryRoute.js")
 const balanceSheetRoute = require("./collectionRoutes/balanceSheetRoute.js")
 const packageRoute = require("./collectionRoutes/packageRoute.js")
 const adminRoute = require("./collectionRoutes/adminRoute.js")
+const noticeRoute = require("./collectionRoutes/noticeRoute.js")
 const app = express();
 // const port = process.env.PORT || 5000;
 
@@ -45,6 +46,7 @@ app.use('/grocery', groceryRoute)
 app.use('/balanceSheet', balanceSheetRoute)
 app.use('/package', packageRoute)
 app.use('/admin', adminRoute)
+app.use('/notice', noticeRoute)
 
 app.listen(3001, () => {
   console.log("Mongoose Server running");

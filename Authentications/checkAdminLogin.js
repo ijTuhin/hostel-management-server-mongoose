@@ -4,9 +4,9 @@ const checkAdminLogin = (req, res, next) => {
     try{
         const token = authorization.split(" ")[1];
         const decoded = jwt.verify(token, process.env.SECRET_JWT_TOKEN);
-        const {email, userId} = decoded;
+        const {email, adminId} = decoded;
         req.email = email
-        req.userId = userId;
+        req.adminId = adminId;
         next();
     }
     catch{
