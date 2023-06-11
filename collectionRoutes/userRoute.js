@@ -116,11 +116,16 @@ router.get("/meal", async (req, res) => {
 
 // GET room by Id
 router.get("/attendance", async (req, res) => {
+  const page = req.query.page;
+  const size = req.query.size;
+  const total = await User.estimatedDocumentCount()
   await User.find({})
     .populate("attendance", "date time")
     .select("matric dept attendance room")
+    .skip(page * size)
+    .limit(size)
     .then((data) => {
-      res.status(200).json(data);
+      res.status(200).json({data, total});
     })
     .catch(() => {
       res.status(400).json({
