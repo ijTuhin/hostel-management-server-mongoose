@@ -12,12 +12,14 @@ const User = new mongoose.model("User", userSchema);
 
 // POST new Notice
 router.post("/", checkAdminLogin, async (req, res) => {
+  let text = `Dear ${req.body.to}, ${req.body.notice} Thank You.`;
   const senderAdmin = await Admin.findOne({ _id: req.adminId });
   function isMatric(str) {
     return /[0-9]/.test(str);
   }
   const newNotice = await new Notice({
     ...req.body,
+    notice: text,
     sender: req.adminId,
   }).save();
 
@@ -29,26 +31,25 @@ router.post("/", checkAdminLogin, async (req, res) => {
   )
     .then(() => res.json("Notice Marked"))
     .catch(() => res.json("Oops! Something went wrong!"));
+
   if (isMatric(req.body.to)) {
-    const matric = req.body.to;
     await User.updateOne(
-      { matric: matric },
+      { matric: req.body.to },
       {
         $push: { notice: newNotice._id },
       }
     );
   } else if (req.body.to === "warden" || req.body.to === "finance") {
-    const admin = req.body.to;
     if (senderAdmin.role !== req.body.to) {
       await Admin.updateMany(
-        { role: admin },
+        { role: req.body.to },
         {
           $push: { notice: newNotice._id },
         }
       );
     } else {
       await Admin.updateMany(
-        { $nor: [{ _id: senderAdmin._id }], role: admin },
+        { $nor: [{ _id: senderAdmin._id }], role: req.body.to },
         {
           $push: { notice: newNotice._id },
         }
