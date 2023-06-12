@@ -71,4 +71,26 @@ router.get("/", checkAdminLogin, async (req, res) => {
     .catch(() => res.json("Oops! Something went wrong!"));
 });
 
+// DELETE Notice request by ID
+router.delete("/:id", checkAdminLogin, async (req, res) => {
+  await Notice.deleteOne({ _id: req.params.id })
+    .then(() => res.json("Notice deleted"))
+    .catch(() => res.json("Oops! Something went wrong!"));
+});
+
+// GET notice
+router.get("/get", checkAdminLogin, checkLogin, async (req, res) => {
+  if (req.adminId) {
+    await Admin.findOne({ _id: req.adminId })
+      .select("notice")
+      .then((data) => res.json(data))
+      .catch(() => res.json("Oops! Something went wrong!"));
+  } else if (req.userId) {
+    await User.findOne({ _id: req.userId })
+      .select("notice")
+      .then((data) => res.json(data))
+      .catch(() => res.json("Oops! Something went wrong!"));
+  }
+});
+
 module.exports = router;
