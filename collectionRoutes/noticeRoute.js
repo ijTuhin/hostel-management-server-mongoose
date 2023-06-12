@@ -13,9 +13,6 @@ const User = new mongoose.model("User", userSchema);
 // POST new Notice
 router.post("/", checkAdminLogin, async (req, res) => {
   const senderAdmin = await Admin.findOne({ _id: req.adminId });
-  /* .then((d) => res.json(d))
-    .catch(() => res.json("Oops! Something went wrong!"));
-    console.log(admin.role) */
   function isMatric(str) {
     return /[0-9]/.test(str);
   }
@@ -49,22 +46,14 @@ router.post("/", checkAdminLogin, async (req, res) => {
           $push: { notice: newNotice._id },
         }
       );
-    }
-    /* if (senderAdmin.role !== req.body.to) {
-      await Admin.updateMany(
-        { role: admin },
-        {
-          $push: { notice: newNotice._id },
-        }
-      );
     } else {
-      await Admin.updateMany({ _id: { $not: senderAdmin._id } },
-        // { $nor: [{ _id: senderAdmin._id }] },
+      await Admin.updateMany(
+        { $nor: [{ _id: senderAdmin._id }], role: admin },
         {
           $push: { notice: newNotice._id },
         }
       );
-    } */
+    }
   } else {
     await User.updateMany(
       {},
@@ -73,34 +62,6 @@ router.post("/", checkAdminLogin, async (req, res) => {
       }
     );
   }
-  /* .then(() => res.json("Notice Marked"))
-    .catch(() => res.json("Oops! Something went wrong!")); */
-});
-
-// DELETE Notice request by ID
-router.delete("/:id", checkAdminLogin, async (req, res) => {
-  await Notice.deleteOne({ _id: req.params.id })
-    .then(() => res.json("Notice deleted"))
-    .catch(() => res.json("Oops! Something went wrong!"));
-});
-
-// GET by id
-router.get("/:id", checkAdminLogin, async (req, res) => {
-  await Notice.find({ _id: req.params.id })
-    .populate("user", "matric dept room name")
-    .then((data) => res.json(data))
-    .catch(() => res.json("Oops! Something went wrong!"));
-});
-
-// GET by Query
-router.get("/", async (req, res) => {
-  let query = {};
-  if (req.query.date) {
-    query = { date: req.query.date }; // http://localhost:3001/Notice?date=${date}
-  }
-  await Notice.find(query)
-    .then((data) => res.json(data))
-    .catch(() => res.json("Oops! Something went wrong!"));
 });
 
 module.exports = router;
