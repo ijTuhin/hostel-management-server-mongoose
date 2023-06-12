@@ -64,4 +64,11 @@ router.post("/", checkAdminLogin, async (req, res) => {
   }
 });
 
+// GET by sender
+router.get("/", checkAdminLogin, async (req, res) => {
+  await Notice.find({ sender: req.adminId })
+    .then((data) => res.json(data))
+    .catch(() => res.json("Oops! Something went wrong!"));
+});
+
 module.exports = router;
