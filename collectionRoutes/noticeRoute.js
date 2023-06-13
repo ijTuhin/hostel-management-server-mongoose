@@ -13,12 +13,13 @@ const User = new mongoose.model("User", userSchema);
 // POST new Notice
 router.post("/", checkAdminLogin, async (req, res) => {
   let text = `Dear ${req.body.to}, ${req.body.notice} Thank You.`;
-  const senderAdmin = await Admin.findOne({ _id: req.adminId });
   function isMatric(str) {
     return /[0-9]/.test(str);
   }
+  const notices = await Notice.find({});
   const newNotice = await new Notice({
     ...req.body,
+    index: notices.length,
     notice: text,
     sender: req.adminId,
   }).save();
@@ -40,6 +41,7 @@ router.post("/", checkAdminLogin, async (req, res) => {
       }
     );
   } else if (req.body.to === "warden" || req.body.to === "finance") {
+    const senderAdmin = await Admin.findOne({ _id: req.adminId });
     if (senderAdmin.role !== req.body.to) {
       await Admin.updateMany(
         { role: req.body.to },
@@ -68,6 +70,7 @@ router.post("/", checkAdminLogin, async (req, res) => {
 // GET by sender
 router.get("/", checkAdminLogin, async (req, res) => {
   await Notice.find({ sender: req.adminId })
+    .sort({ index: -1 })
     .then((data) => res.json(data))
     .catch(() => res.json("Oops! Something went wrong!"));
 });
@@ -83,13 +86,31 @@ router.delete("/:id", checkAdminLogin, async (req, res) => {
 router.get("/get", checkAdminLogin, checkLogin, async (req, res) => {
   if (req.adminId) {
     await Admin.findOne({ _id: req.adminId })
+      .sort({ index: -1 })
       .select("notice")
-      .then((data) => res.json(data))
+      .populate({
+        path: "notice",
+        select: "title sender notice",
+        populate: {
+          path: "sender",
+          select: "role",
+        },
+      })
+      .then((data) => res.json(data.notice))
       .catch(() => res.json("Oops! Something went wrong!"));
   } else if (req.userId) {
     await User.findOne({ _id: req.userId })
+      .sort({ index: -1 })
       .select("notice")
-      .then((data) => res.json(data))
+      .populate({
+        path: "notice",
+        select: "title sender notice",
+        populate: {
+          path: "sender",
+          select: "role",
+        },
+      })
+      .then((data) => res.json(data.notice))
       .catch(() => res.json("Oops! Something went wrong!"));
   }
 });

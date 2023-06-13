@@ -19,6 +19,7 @@ const noticeSchema = mongoose.Schema({
   to: String,
   title: String,
   notice: String,
+  index: Number,
   month: {
     type: String,
     default: month,

@@ -55,7 +55,7 @@ router.post("/meal/login", async (req, res) => {
           },
           process.env.SECRET_JWT_TOKEN,
           {
-            expiresIn: "1h",
+            expiresIn: "10h",
           }
         );
         res.status(200).json({
@@ -96,7 +96,7 @@ router.post("/login", async (req, res) => {
           },
           process.env.SECRET_JWT_TOKEN,
           {
-            expiresIn: "1h",
+            expiresIn: "10h",
           }
         );
 
