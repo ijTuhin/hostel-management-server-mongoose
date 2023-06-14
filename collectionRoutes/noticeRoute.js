@@ -69,6 +69,7 @@ router.post("/", checkAdminLogin, async (req, res) => {
 
 // GET by sender
 router.get("/", checkAdminLogin, async (req, res) => {
+  console.log(req.adminId);
   await Notice.find({ sender: req.adminId })
     .sort({ index: -1 })
     .then((data) => res.json(data))
