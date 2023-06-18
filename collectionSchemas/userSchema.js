@@ -21,48 +21,54 @@ const userSchema = mongoose.Schema({
   room: {
     type: mongoose.Schema.Types.Number,
     ref: "Seat",
-    default: 0
+    default: 0,
   },
   enroll: {
     type: String,
     default: date,
   },
   meal: {
-    type:Boolean,
-    default: false
+    type: Boolean,
+    default: false,
   },
   rent: {
-    type:Boolean,
-    default: false
+    type: Boolean,
+    default: false,
   },
   coupon: {
     type: Number,
-    default: 0
+    default: 0,
   },
   payments: [
     {
       type: mongoose.Types.ObjectId,
-      ref: "Payment"
-    }
+      ref: "Payment",
+    },
   ],
   orders: [
     {
       type: mongoose.Types.ObjectId,
-      ref: "Meal"
-    }
+      ref: "Meal",
+    },
   ],
   attendance: [
     {
       type: mongoose.Types.ObjectId,
-      ref: "Attendance"
-    }
+      ref: "Attendance",
+    },
   ],
   notice: [
     {
       type: mongoose.Types.ObjectId,
-      ref: "Notice"
-    }
-  ]
+      ref: "Notice",
+    },
+  ],
+  message: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
 });
 
 module.exports = userSchema;

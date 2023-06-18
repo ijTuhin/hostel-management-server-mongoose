@@ -6,22 +6,28 @@ const adminSchema = mongoose.Schema({
   password: String,
   role: {
     type: String,
-    enum: ['meal', 'warden', 'accountant']
+    enum: ["meal", "warden", "accountant"],
   },
   status: Boolean,
   month: String,
   posted: [
     {
       type: mongoose.Types.ObjectId,
-      ref: "Notice"
-    }
+      ref: "Notice",
+    },
   ],
   notice: [
     {
       type: mongoose.Types.ObjectId,
-      ref: "Notice"
-    }
-  ]
+      ref: "Notice",
+    },
+  ],
+  message: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Message",
+    },
+  ],
 });
 
 module.exports = adminSchema;

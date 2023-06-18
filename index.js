@@ -14,6 +14,7 @@ const balanceSheetRoute = require("./collectionRoutes/balanceSheetRoute.js");
 const packageRoute = require("./collectionRoutes/packageRoute.js");
 const adminRoute = require("./collectionRoutes/adminRoute.js");
 const noticeRoute = require("./collectionRoutes/noticeRoute.js");
+const messageRoute = require("./collectionRoutes/messageRoute.js");
 const app = express();
 
 app.use(cors()); // using middleware
@@ -52,6 +53,7 @@ app.use("/balanceSheet", balanceSheetRoute);
 app.use("/package", packageRoute);
 app.use("/admin", adminRoute);
 app.use("/notice", noticeRoute);
+app.use("/message", messageRoute);
 
 app.listen(3001, () => {
   console.log("Mongoose Server running");
