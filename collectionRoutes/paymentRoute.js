@@ -7,7 +7,7 @@ const Payment = new mongoose.model("Payment", paymentSchema);
 const userSchema = require("../collectionSchemas/userSchema.js");
 const User = new mongoose.model("User", userSchema);
 const balanceSheetSchema = require("../collectionSchemas/balanceSheetSchema.js");
-const BalanceSheet = new mongoose.model ("BalanceSheet", balanceSheetSchema);
+const BalanceSheet = new mongoose.model("BalanceSheet", balanceSheetSchema);
 
 // POST new payment and update in User collection
 router.post("/rent", checkLogin, async (req, res) => {
@@ -31,7 +31,7 @@ router.post("/rent", checkLogin, async (req, res) => {
     );
     await BalanceSheet.updateOne(
       { status: 1 },
-      {$push: {seatRent: payment._id,}}
+      { $push: { seatRent: payment._id } }
     )
       .then(async () => {
         res.status(200).json({
@@ -48,7 +48,7 @@ router.post("/rent", checkLogin, async (req, res) => {
 
 // GET by payment id
 router.get("/:id", async (req, res) => {
-  await Payment.find({ _id: req.params.id })
+  await Payment.findOne({ _id: req.params.id })
     .then((data) => {
       res.status(200).json(data);
     })
@@ -58,8 +58,6 @@ router.get("/:id", async (req, res) => {
       });
     });
 });
-
-
 
 // GET payment according to query
 router.get("/", async (req, res) => {
@@ -75,21 +73,8 @@ router.get("/", async (req, res) => {
     };
   }
   await Payment.find(query)
+    .sort({ _id: -1 })
     .populate("user", "matric dept room meal rent")
-    .then((data) => {
-      res.status(200).json(data);
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
-      });
-    });
-});
-
-// GET all
-router.get("/", async (req, res) => {
-  console.log("Email: ", req.email);
-  await Payment.find({})
     .then((data) => {
       res.status(200).json(data);
     })
@@ -114,6 +99,5 @@ router.delete("/:id", async (req, res) => {
       });
     });
 });
-
 
 module.exports = router;

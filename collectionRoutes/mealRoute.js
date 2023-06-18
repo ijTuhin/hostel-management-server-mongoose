@@ -82,7 +82,7 @@ router.delete("/:id", checkLogin, async (req, res) => {
 
 // GET by id
 router.get("/:id", checkLogin, async (req, res) => {
-  await Meal.find({ _id: req.params.id })
+  await Meal.findOne({ _id: req.params.id })
     .populate("user", "matric dept room name")
     .then((data) => res.json(data))
     .catch(() => res.json("Oops! Something went wrong!"));
@@ -100,6 +100,7 @@ router.get("/", async (req, res) => {
     query = { date: req.query.date }; //http://localhost:3001/meal?date=${date}
   }
   await Meal.find(query)
+    .sort({ _id: -1 })
     .populate("user", "matric dept room name")
     .then((data) => res.json(data))
     .catch(() => res.json("Oops! Something went wrong!"));

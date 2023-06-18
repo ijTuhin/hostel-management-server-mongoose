@@ -17,6 +17,7 @@ router.get('/', async(req, res) => {
         }
     }
     await Staff.find(query) 
+    .sort({ _id: -1 })
     .populate("record", "date month")
     .then((data)=>{res.json(data)})
     .catch(()=>{res.json("Oops! Something went wrong!")})

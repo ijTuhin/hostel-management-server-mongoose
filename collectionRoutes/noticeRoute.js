@@ -19,7 +19,6 @@ router.post("/", checkAdminLogin, async (req, res) => {
   const notices = await Notice.find({});
   const newNotice = await new Notice({
     ...req.body,
-    index: notices.length,
     notice: text,
     sender: req.adminId,
   }).save();
@@ -71,7 +70,7 @@ router.post("/", checkAdminLogin, async (req, res) => {
 router.get("/", checkAdminLogin, async (req, res) => {
   console.log(req.adminId);
   await Notice.find({ sender: req.adminId })
-    .sort({ index: -1 })
+    .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch(() => res.json("Oops! Something went wrong!"));
 });
@@ -87,7 +86,7 @@ router.delete("/:id", checkAdminLogin, async (req, res) => {
 router.get("/get", checkAdminLogin, checkLogin, async (req, res) => {
   if (req.adminId) {
     await Admin.findOne({ _id: req.adminId })
-      .sort({ index: -1 })
+      .sort({ _id: -1 })
       .select("notice")
       .populate({
         path: "notice",
@@ -101,7 +100,7 @@ router.get("/get", checkAdminLogin, checkLogin, async (req, res) => {
       .catch(() => res.json("Oops! Something went wrong!"));
   } else if (req.userId) {
     await User.findOne({ _id: req.userId })
-      .sort({ index: -1 })
+      .sort({ _id: -1 })
       .select("notice")
       .populate({
         path: "notice",

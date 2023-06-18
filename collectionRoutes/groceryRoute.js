@@ -17,8 +17,7 @@ router.post("/", async (req, res) => {
     )
       .then((data) => res.json(data))
       .catch(() => res.json("Please check the error!!"));
-  }
-  else res.json('Grocery record exists')
+  } else res.json("Grocery record exists");
 });
 
 // GET all data or data by month or date
@@ -30,6 +29,7 @@ router.get("/", async (req, res) => {
     query = { date: req.query.date };
   }
   await Grocery.find(query)
+    .sort({ _id: -1 })
     .then((data) => {
       res.json(data);
     })

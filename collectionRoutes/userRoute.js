@@ -19,6 +19,7 @@ router.get("/", async (req, res) => {
     query = { rent: req.query.rent }; //http://localhost:3001/user?rent=${rent}
   }
   await User.find(query)
+    .sort({ _id: -1 })
     .then((data) => {
       res.status(200).json(data);
     })
@@ -31,6 +32,7 @@ router.get("/", async (req, res) => {
 });
 router.get("/update", async (req, res) => {
   await User.findOne({ matric: req.query.matric })
+    .sort({ _id: -1 })
     .select({
       enroll: 0,
       meal: 0,
@@ -60,6 +62,7 @@ router.get("/search", async (req, res) => {
   await User.find({
     $or: [{ matric: req.query.matric }, { name: req.query.name }],
   })
+    .sort({ _id: -1 })
     .then((data) => {
       res.status(200).json(data);
     })
@@ -75,6 +78,7 @@ router.get("/search", async (req, res) => {
 router.get("/data", async (req, res) => {
   let query = {};
   await User.find(query)
+    .sort({ _id: -1 })
     .select("matric name enroll sem dept room email")
     .then((data) => {
       res.status(200).json(data);
@@ -90,6 +94,7 @@ router.get("/data", async (req, res) => {
 router.get("/rent", async (req, res) => {
   let query = {};
   await User.find(query)
+    .sort({ _id: -1 })
     .select("matric dept room rent")
     .then((data) => {
       res.status(200).json(data);
@@ -103,6 +108,7 @@ router.get("/rent", async (req, res) => {
 router.get("/meal", async (req, res) => {
   let query = {};
   await User.find(query)
+    .sort({ _id: -1 })
     .select("matric dept room meal coupon")
     .then((data) => {
       res.status(200).json(data);
@@ -118,14 +124,14 @@ router.get("/meal", async (req, res) => {
 router.get("/attendance", async (req, res) => {
   const page = req.query.page;
   const size = req.query.size;
-  const total = await User.estimatedDocumentCount()
+  const total = await User.estimatedDocumentCount();
   await User.find({})
     .populate("attendance", "date time")
     .select("matric dept attendance room")
     .skip(page * size)
     .limit(size)
     .then((data) => {
-      res.status(200).json({data, total});
+      res.status(200).json({ data, total });
     })
     .catch(() => {
       res.status(400).json({
@@ -224,20 +230,23 @@ router.post("/data-entry", async (req, res) => {
 
 // UPDATE user room no. by Id
 router.put("/update/:id", async (req, res) => {
-  await User.updateOne({_id: req.params.id},{
-    $set:{
-      name: req.body.name,
-      password: req.body.password,
-      current: req.body.current,
-      sem: req.body.sem,
-      phone: req.body.phone,
-      district: req.body.district,
-      address: req.body.address,
-      thana: req.body.thana,
+  await User.updateOne(
+    { _id: req.params.id },
+    {
+      $set: {
+        name: req.body.name,
+        password: req.body.password,
+        current: req.body.current,
+        sem: req.body.sem,
+        phone: req.body.phone,
+        district: req.body.district,
+        address: req.body.address,
+        thana: req.body.thana,
+      },
     }
-  })
-  .then(()=> res.json('Updated'))
-  .catch(()=> res.json('Could not Update'))
+  )
+    .then(() => res.json("Updated"))
+    .catch(() => res.json("Could not Update"));
 });
 
 // DELETE

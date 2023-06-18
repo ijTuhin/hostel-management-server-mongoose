@@ -13,6 +13,7 @@ router.get("/", async (req, res) => {
     query = { vacancy: req.query.vacancy }; //http://localhost:3001/seat?vacancy=${vacancy}
   }
   await Seat.find(query)
+    .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch(() => {
       res.status(400).json({
@@ -81,9 +82,9 @@ router.post("/all", async (req, res) => {
 // Remove user from seat
 router.put("/:room/remove/:matric", async (req, res) => {
   const vacant = await Seat.findOne({ room: req.params.room });
-  let status = vacant.vacancy
-  if(!status){
-      status = true
+  let status = vacant.vacancy;
+  if (!status) {
+    status = true;
   }
   await Seat.updateOne(
     { room: req.params.room },
@@ -112,15 +113,14 @@ router.put("/:room/remove/:matric", async (req, res) => {
     });
 });
 
-
 // Allocate User Seat
 router.put("/:matric/allocate/:room", async (req, res) => {
   const previous = req.body.previous;
   if (previous) {
     const prevVacant = await Seat.findOne({ room: previous });
-    let prevStatus = prevVacant.vacancy
-    if(!prevStatus){
-        prevStatus = true
+    let prevStatus = prevVacant.vacancy;
+    if (!prevStatus) {
+      prevStatus = true;
     }
     await Seat.updateOne(
       { room: previous },
@@ -133,9 +133,9 @@ router.put("/:matric/allocate/:room", async (req, res) => {
     );
   }
   const vacant = await Seat.findOne({ room: req.params.room });
-  let status = true
-  if(vacant.vacant === 1){
-    status = false
+  let status = true;
+  if (vacant.vacant === 1) {
+    status = false;
   }
   await Seat.updateOne(
     { room: req.params.room },
