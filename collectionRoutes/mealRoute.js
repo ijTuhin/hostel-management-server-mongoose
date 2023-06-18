@@ -2,10 +2,13 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 const checkLogin = require("../Authentications/checkLogin.js");
+const checkAdminLogin = require("../Authentications/checkAdminLogin.js");
 const mealSchema = require("../collectionSchemas/mealSchema");
 const Meal = new mongoose.model("Meal", mealSchema);
 const userSchema = require("../collectionSchemas/userSchema.js");
 const User = new mongoose.model("User", userSchema);
+const adminSchema = require("../collectionSchemas/adminSchema.js");
+const Admin = new mongoose.model("Admin", adminSchema);
 
 // POST meal order with time condition
 router.post("/order", checkLogin, async (req, res) => {
@@ -51,19 +54,21 @@ router.post("/order", checkLogin, async (req, res) => {
 });
 
 // UPDATE received status by Id
-router.put("/:id", checkLogin, async (req, res) => {
-  await Meal.updateOne(
-    { _id: req.params.id },
-    {
-      $set: { status: 1 },
-    }
-  )
-    .then(() => res.json("Meal received"))
-    .catch(() => res.json("Oops! Something went wrong!"));
+router.put("/:id", checkAdminLogin, checkLogin, async (req, res) => {
+  const admin = await Admin.findOne({ _id: req.adminId }).select("role");
+  if (req.userId || admin.role === "warden")
+    await Meal.updateOne(
+      { _id: req.params.id },
+      {
+        $set: { status: 1 },
+      }
+    )
+      .then(() => res.json("Meal received"))
+      .catch(() => res.json("Oops! Something went wrong!"));
 });
 
 // DELETE meal request by ID
-router.delete("/:id", checkLogin, async (req, res) => {
+router.delete("/:id", checkAdminLogin, checkLogin, async (req, res) => {
   const meal = await Meal.findOne({ _id: req.params.id });
   if (!meal.status) {
     const user = await User.findOne({ _id: req.userId });
@@ -89,7 +94,7 @@ router.get("/:id", checkLogin, async (req, res) => {
 });
 
 // GET all
-router.get("/", async (req, res) => {
+router.get("/", checkAdminLogin, checkLogin, async (req, res) => {
   let query = {};
   if (req.query.date && req.query.meal) {
     query = {
@@ -99,11 +104,18 @@ router.get("/", async (req, res) => {
   } else if (req.query.date) {
     query = { date: req.query.date }; //http://localhost:3001/meal?date=${date}
   }
-  await Meal.find(query)
-    .sort({ _id: -1 })
-    .populate("user", "matric dept room name")
-    .then((data) => res.json(data))
-    .catch(() => res.json("Oops! Something went wrong!"));
+  if (req.adminId)
+    await Meal.find(query)
+      .sort({ _id: -1 })
+      .populate("user", "matric dept room name")
+      .then((data) => res.json(data))
+      .catch(() => res.json("Oops! Something went wrong!"));
+  if (req.userId)
+    await Meal.find({ user: req.userId })
+      .sort({ _id: -1 })
+      .populate("user", "matric dept room name")
+      .then((data) => res.json(data))
+      .catch(() => res.json("Oops! Something went wrong!"));
 });
 
 module.exports = router;

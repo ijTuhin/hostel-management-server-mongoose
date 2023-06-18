@@ -1,13 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
+const checkAdminLogin = require("../Authentications/checkAdminLogin.js");
 const seatSchema = require("../collectionSchemas/seatSchema.js");
 const Seat = new mongoose.model("Seat", seatSchema);
 const userSchema = require("../collectionSchemas/userSchema.js");
 const User = new mongoose.model("User", userSchema);
 
 // GET all room details
-router.get("/", async (req, res) => {
+router.get("/", checkAdminLogin, async (req, res) => {
   let query = {};
   if (req.query.vacancy) {
     query = { vacancy: req.query.vacancy }; //http://localhost:3001/seat?vacancy=${vacancy}
@@ -21,7 +22,7 @@ router.get("/", async (req, res) => {
       });
     });
 });
-router.get("/vacant", async (req, res) => {
+router.get("/vacant", checkAdminLogin, async (req, res) => {
   await Seat.find({ vacancy: true })
     .sort({ vacant: 1 })
     .select("room vacant")
@@ -34,7 +35,7 @@ router.get("/vacant", async (req, res) => {
 });
 
 // GET room details
-router.get("/:id", async (req, res) => {
+router.get("/:id", checkAdminLogin, async (req, res) => {
   await Seat.find({ _id: req.params.id })
     // .populate("member", "matric name dept sem")
     .then((data) => {
@@ -48,7 +49,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // Add new room
-router.post("/", async (req, res) => {
+router.post("/", checkAdminLogin, async (req, res) => {
   const newSeat = new Seat(req.body);
   await newSeat
     .save()
@@ -65,7 +66,7 @@ router.post("/", async (req, res) => {
 });
 
 // POST many
-router.post("/all", async (req, res) => {
+router.post("/all", checkAdminLogin, async (req, res) => {
   await Seat.insertMany(req.body)
     .then(() => {
       res.status(200).json({
@@ -80,7 +81,7 @@ router.post("/all", async (req, res) => {
 });
 
 // Remove user from seat
-router.put("/:room/remove/:matric", async (req, res) => {
+router.put("/:room/remove/:matric", checkAdminLogin, async (req, res) => {
   const vacant = await Seat.findOne({ room: req.params.room });
   let status = vacant.vacancy;
   if (!status) {
@@ -114,7 +115,7 @@ router.put("/:room/remove/:matric", async (req, res) => {
 });
 
 // Allocate User Seat
-router.put("/:matric/allocate/:room", async (req, res) => {
+router.put("/:matric/allocate/:room", checkAdminLogin, async (req, res) => {
   const previous = req.body.previous;
   if (previous) {
     const prevVacant = await Seat.findOne({ room: previous });
@@ -170,7 +171,7 @@ router.put("/:matric/allocate/:room", async (req, res) => {
 });
 
 // DELETE room
-router.delete("/:room", async (req, res) => {
+router.delete("/:room", checkAdminLogin, async (req, res) => {
   await Seat.deleteOne({ room: req.params.room })
     .then((data) => {
       res.status(200).json({

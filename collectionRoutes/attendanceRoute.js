@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 const checkLogin = require("../Authentications/checkLogin.js");
+const checkAdminLogin = require("../Authentications/checkAdminLogin.js");
 const attendanceSchema = require("../collectionSchemas/attendanceSchema");
 const Attendance = new mongoose.model("Attendance", attendanceSchema);
 const userSchema = require("../collectionSchemas/userSchema.js");

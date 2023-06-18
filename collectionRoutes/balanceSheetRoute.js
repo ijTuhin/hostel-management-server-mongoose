@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
+const checkAdminLogin = require("../Authentications/checkAdminLogin.js");
 const balanceSheetSchema = require("../collectionSchemas/balanceSheetSchema")
 const BalanceSheet = new mongoose.model("BalanceSheet", balanceSheetSchema)
 const paymentSchema = require("../collectionSchemas/paymentSchema.js");
@@ -13,7 +14,7 @@ const grocerySchema = require("../collectionSchemas/grocerySchema");
 const Grocery = new mongoose.model("Grocery", grocerySchema);
 
 // GET all data from Balance Sheet and UPDATE debit-credit
-router.get("/", async(req, res) => {
+router.get("/", checkAdminLogin, async(req, res) => {
     let query = {month: req.query.month}
     let credit = 0
     let debit = 0

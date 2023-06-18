@@ -1,6 +1,7 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
+const checkAdminLogin = require("../Authentications/checkAdminLogin.js");
 const salarySchema = require("../collectionSchemas/salarySchema.js");
 const Salary = new mongoose.model("Salary", salarySchema);
 const staffSchema = require("../collectionSchemas/staffSchema.js");
@@ -9,7 +10,7 @@ const balanceSheetSchema = require("../collectionSchemas/balanceSheetSchema.js")
 const BalanceSheet = new mongoose.model("BalanceSheet", balanceSheetSchema);
 
 // GET salary record by query
-router.get("/", async (req, res) => {
+router.get("/", checkAdminLogin, async (req, res) => {
   let query = {};
   if (req.query.month) {
     query = { month: req.query.month }; //http://localhost:3001/salary?month=${month}
@@ -30,7 +31,7 @@ router.get("/", async (req, res) => {
 });
 
 // GET salary record by Id
-router.get("/:id", async (req, res) => {
+router.get("/:id", checkAdminLogin, async (req, res) => {
   await Salary.findOne({ _id: req.params.id })
     .populate("staff", "name position phone")
     .then((data) => {
@@ -44,7 +45,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST salary by staff ID
-router.post("/:id", async (req, res) => {
+router.post("/:id", checkAdminLogin, async (req, res) => {
   const staffSalary = await Staff.findOne({ _id: req.params.id }).select(
     "salary"
   );
@@ -73,7 +74,7 @@ router.post("/:id", async (req, res) => {
 });
 
 // DELETE salary record by ID
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", checkAdminLogin, async (req, res) => {
   await Salary.deleteOne({ _id: req.params.id })
     .then(() => {
       res.json({

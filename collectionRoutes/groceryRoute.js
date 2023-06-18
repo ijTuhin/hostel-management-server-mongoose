@@ -1,13 +1,14 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
+const checkAdminLogin = require("../Authentications/checkAdminLogin.js");
 const grocerySchema = require("../collectionSchemas/grocerySchema");
 const Grocery = new mongoose.model("Grocery", grocerySchema);
 const balanceSheetSchema = require("../collectionSchemas/balanceSheetSchema");
 const BalanceSheet = new mongoose.model("BalanceSheet", balanceSheetSchema);
 
 // POST new date record
-router.post("/", async (req, res) => {
+router.post("/", checkAdminLogin, async (req, res) => {
   const record = await Grocery.find({ date: req.query.date });
   if (!record.length) {
     const newGrocery = await new Grocery(req.body).save();
@@ -21,7 +22,7 @@ router.post("/", async (req, res) => {
 });
 
 // GET all data or data by month or date
-router.get("/", async (req, res) => {
+router.get("/", checkAdminLogin, async (req, res) => {
   let query = {};
   if (req.query.month) {
     query = { month: req.query.month };
@@ -37,7 +38,7 @@ router.get("/", async (req, res) => {
 });
 
 // Add new grocery items to current date
-router.put("/", async (req, res) => {
+router.put("/", checkAdminLogin, async (req, res) => {
   const name = req.body.list.name;
   const data = await Grocery.find({
     date: req.query.date,
