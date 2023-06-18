@@ -115,12 +115,32 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// get Messages
+// GET Messages
 router.get("/message", checkAdminLogin, async (req, res) => {
-  const admin = await Admin.findOne({_id: req.adminId}).select("role")
+  const admin = await Admin.findOne({ _id: req.adminId }).select("role");
   await Message.find({ to: admin.role })
+    .populate("reply.from", "name")
+    .populate("sender", "matric name")
     .sort({ _id: -1 })
     .then((data) => res.json(data))
+    .catch(() => res.json("Oops! Something went wrong!"));
+});
+
+// POST reply to message
+router.put("/message/:id", checkAdminLogin, async (req, res) => {
+  const admin = await Admin.findOne({ _id: req.adminId }).select("role");
+  await Message.updateOne(
+    { to: admin.role, _id: req.params.id },
+    {
+      $set: {
+        reply: {
+          text: req.body.reply.text,
+          from: req.adminId,
+        },
+      },
+    }
+  )
+    .then(() => res.json(`Replied to the message`))
     .catch(() => res.json("Oops! Something went wrong!"));
 });
 

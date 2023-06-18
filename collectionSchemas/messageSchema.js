@@ -17,6 +17,13 @@ const messageSchema = mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref: "User",
   },
+  reply: {
+    text: String,
+    from: {
+      type: mongoose.Types.ObjectId,
+      ref: "Admin",
+    },
+  },
 });
 
 module.exports = messageSchema;

@@ -1,7 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
-const checkAdminLogin = require("../Authentications/checkAdminLogin.js");
 const checkLogin = require("../Authentications/checkLogin.js");
 const messageSchema = require("../collectionSchemas/messageSchema.js");
 const Message = new mongoose.model("Message", messageSchema);
@@ -12,7 +11,7 @@ const User = new mongoose.model("User", userSchema);
 
 // POST new Message
 router.post("/", checkLogin, async (req, res) => {
-  let text = `Assalamu Alaikum ${req.body.to} Sir/Ma'am, ${req.body.message} Thank You.`;
+  let text = `Assalamu Alaikum ${req.body.to} Sir/ Ma'am, ${req.body.message} Thank You.`;
   const newMessage = await new Message({
     ...req.body,
     message: text,
@@ -37,11 +36,11 @@ router.post("/", checkLogin, async (req, res) => {
 // GET by sender
 router.get("/", checkLogin, async (req, res) => {
   await Message.find({ sender: req.userId })
+    .populate("reply.from", "name")
     .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch(() => res.json("Oops! Something went wrong!"));
 });
-
 
 // DELETE message by ID
 router.delete("/:id", checkLogin, async (req, res) => {
@@ -49,6 +48,5 @@ router.delete("/:id", checkLogin, async (req, res) => {
     .then(() => res.json("Message deleted"))
     .catch(() => res.json("Oops! Something went wrong!"));
 });
-
 
 module.exports = router;
