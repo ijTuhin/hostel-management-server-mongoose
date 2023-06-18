@@ -2,6 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
 const router = express.Router();
+const checkAdminLogin = require("../Authentications/checkAdminLogin.js");
+const checkLogin = require("../Authentications/checkLogin.js");
 const userSchema = require("../collectionSchemas/userSchema.js");
 const User = new mongoose.model("User", userSchema);
 const seatSchema = require("../collectionSchemas/seatSchema.js");
@@ -30,7 +32,7 @@ router.get("/", async (req, res) => {
       });
     });
 });
-router.get("/update", async (req, res) => {
+router.get("/update", checkAdminLogin, checkLogin, async (req, res) => {
   await User.findOne({ matric: req.query.matric })
     .sort({ _id: -1 })
     .select({
@@ -58,7 +60,7 @@ router.get("/update", async (req, res) => {
     });
 });
 // GET
-router.get("/search", async (req, res) => {
+router.get("/search", checkAdminLogin, checkLogin, async (req, res) => {
   await User.find({
     $or: [{ matric: req.query.matric }, { name: req.query.name }],
   })
@@ -75,7 +77,7 @@ router.get("/search", async (req, res) => {
 });
 
 // GET all with academic data
-router.get("/data", async (req, res) => {
+router.get("/data", checkAdminLogin, checkLogin, async (req, res) => {
   let query = {};
   await User.find(query)
     .sort({ _id: -1 })
@@ -91,7 +93,7 @@ router.get("/data", async (req, res) => {
 });
 
 // GET all rent & meal status
-router.get("/rent", async (req, res) => {
+router.get("/rent", checkAdminLogin, checkLogin, async (req, res) => {
   let query = {};
   await User.find(query)
     .sort({ _id: -1 })
@@ -105,7 +107,7 @@ router.get("/rent", async (req, res) => {
       });
     });
 });
-router.get("/meal", async (req, res) => {
+router.get("/meal", checkAdminLogin, checkLogin, async (req, res) => {
   let query = {};
   await User.find(query)
     .sort({ _id: -1 })
@@ -121,7 +123,7 @@ router.get("/meal", async (req, res) => {
 });
 
 // GET room by Id
-router.get("/attendance", async (req, res) => {
+router.get("/attendance", checkAdminLogin, checkLogin, async (req, res) => {
   const page = req.query.page;
   const size = req.query.size;
   const total = await User.estimatedDocumentCount();
@@ -140,7 +142,7 @@ router.get("/attendance", async (req, res) => {
     });
 });
 // GET room by Id
-router.get("/room/:id", async (req, res) => {
+router.get("/room/:id", checkAdminLogin, checkLogin, async (req, res) => {
   await User.find({ _id: req.params.id })
     .populate("room", "room")
     .select("matric dept room sem")
@@ -155,7 +157,7 @@ router.get("/room/:id", async (req, res) => {
 });
 
 // GET user payment records by ID
-router.get("/payments/:id", async (req, res) => {
+router.get("/payments/:id", checkAdminLogin, checkLogin, async (req, res) => {
   await User.find({ _id: req.params.id })
     .populate("payments")
     .select("matric dept room rent")
@@ -170,7 +172,7 @@ router.get("/payments/:id", async (req, res) => {
 });
 
 // User SIGN-UP & LOG IN
-router.post("/signup", async (req, res) => {
+router.post("/signup", checkAdminLogin, async (req, res) => {
   const newUser = new User(req.body);
   await newUser
     .save()
@@ -185,7 +187,7 @@ router.post("/signup", async (req, res) => {
       });
     });
 });
-router.post("/login", async (req, res) => {
+router.post("/login", checkLogin, async (req, res) => {
   try {
     const user = await User.find({ email: req.body.email });
     if (user && user.length > 0) {
@@ -214,7 +216,7 @@ router.post("/login", async (req, res) => {
 });
 
 // POST many
-router.post("/data-entry", async (req, res) => {
+router.post("/data-entry", checkAdminLogin, async (req, res) => {
   await User.insertMany(req.body)
     .then(() => {
       res.status(200).json({
@@ -229,7 +231,7 @@ router.post("/data-entry", async (req, res) => {
 });
 
 // UPDATE user room no. by Id
-router.put("/update/:id", async (req, res) => {
+router.put("/update/:id", checkAdminLogin, async (req, res) => {
   await User.updateOne(
     { _id: req.params.id },
     {
@@ -248,9 +250,35 @@ router.put("/update/:id", async (req, res) => {
     .then(() => res.json("Updated"))
     .catch(() => res.json("Could not Update"));
 });
+// UPDATE account validity
+router.put("/account/:id", checkAdminLogin, async (req, res) => {
+  const user = await User.findOne({ _id: req.params.id });
+  if (user.account)
+    await User.updateOne(
+      { _id: req.params.id },
+      {
+        $set: {
+          account: false,
+        },
+      }
+    )
+      .then(() => res.json("Account invalidated"))
+      .catch(() => res.json("Could not Update"));
+  else
+    await User.updateOne(
+      { _id: req.params.id },
+      {
+        $set: {
+          account: true,
+        },
+      }
+    )
+      .then(() => res.json("Account validated"))
+      .catch(() => res.json("Could not Update"));
+});
 
 // DELETE
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", checkAdminLogin, async (req, res) => {
   await User.deleteOne({ _id: req.params.id })
     .then((data) => {
       res.status(200).json({
