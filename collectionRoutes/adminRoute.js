@@ -4,6 +4,9 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 const adminSchema = require("../collectionSchemas/adminSchema.js");
 const Admin = new mongoose.model("Admin", adminSchema);
+const checkAdminLogin = require("../Authentications/checkAdminLogin.js");
+const messageSchema = require("../collectionSchemas/messageSchema.js");
+const Message = new mongoose.model("Message", messageSchema);
 
 // Meal Manager SIGN-UP & LOG IN
 router.post("/create-meal-manager", async (req, res) => {
@@ -110,6 +113,15 @@ router.post("/login", async (req, res) => {
   } catch {
     res.status(401).json("Authentication Failed");
   }
+});
+
+// get Messages
+router.get("/message", checkAdminLogin, async (req, res) => {
+  const admin = await Admin.findOne({_id: req.adminId}).select("role")
+  await Message.find({ to: admin.role })
+    .sort({ _id: -1 })
+    .then((data) => res.json(data))
+    .catch(() => res.json("Oops! Something went wrong!"));
 });
 
 module.exports = router;
