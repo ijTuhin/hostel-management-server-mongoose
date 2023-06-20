@@ -8,7 +8,7 @@ const balanceSheetSchema = require("../collectionSchemas/balanceSheetSchema");
 const BalanceSheet = new mongoose.model("BalanceSheet", balanceSheetSchema);
 
 // POST new date record
-router.post("/", checkAdminLogin, async (req, res) => {
+router.post("/", async (req, res) => {
   const record = await Grocery.find({ date: req.query.date });
   if (!record.length) {
     const newGrocery = await new Grocery(req.body).save();
@@ -22,7 +22,7 @@ router.post("/", checkAdminLogin, async (req, res) => {
 });
 
 // GET all data or data by month or date
-router.get("/", checkAdminLogin, async (req, res) => {
+router.get("/", async (req, res) => {
   let query = {};
   if (req.query.month) {
     query = { month: req.query.month };
@@ -38,7 +38,7 @@ router.get("/", checkAdminLogin, async (req, res) => {
 });
 
 // Add new grocery items to current date
-router.put("/", checkAdminLogin, async (req, res) => {
+router.put("/", async (req, res) => {
   const name = req.body.list.name;
   const data = await Grocery.find({
     date: req.query.date,
