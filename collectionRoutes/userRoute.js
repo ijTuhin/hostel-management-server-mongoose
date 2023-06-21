@@ -73,7 +73,8 @@ router.get("/", checkAdminLogin, async (req, res) => {
 router.get("/meal-status", checkAdminLogin, async (req, res) => {
   await User.find({})
     .sort({ meal: -1 })
-    .select("matric name sem dept room meal")
+    .select("matric name sem dept room meal coupon")
+    .populate("payments", "item date month bill package")
     .then((data) => {
       res.status(200).json(data);
     })
@@ -88,6 +89,7 @@ router.get("/rent-status", checkAdminLogin, async (req, res) => {
   await User.find({})
     .sort({ rent: -1 })
     .select("matric name sem dept room rent")
+    .populate("payments", "item date month")
     .then((data) => {
       res.status(200).json(data);
     })
