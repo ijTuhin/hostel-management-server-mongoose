@@ -49,13 +49,15 @@ router.get("/:id", checkLogin, async (req, res) => {
 router.get("/", async (req, res) => {
   const page = req.query.page;
   const size = req.query.size;
-  const total = await Attendance.estimatedDocumentCount();
+  const total = await Attendance.find({
+    date: new Date().toLocaleDateString(),
+  });
   await Attendance.find({ date: req.query.date })
     .sort({ _id: -1 })
     .populate("user", "matric dept room name")
     .skip(page * size)
     .limit(size)
-    .then((data) => res.json({ data, total }))
+    .then((data) => res.json({ data, total: total.length }))
     .catch(() => res.json("Oops! Something went wrong!"));
 });
 
