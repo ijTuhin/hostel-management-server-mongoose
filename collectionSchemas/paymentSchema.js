@@ -8,6 +8,11 @@ const paymentSchema = mongoose.Schema({
     enum: ["meal", "rent"],
   },
   bill: Number,
+  transaction: String,
+  package: {
+    type: Number,
+    enum: [2, 7, 30]
+  },
   date: {
     type: String,
     default: date,
