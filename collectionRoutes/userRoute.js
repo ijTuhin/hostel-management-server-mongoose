@@ -6,8 +6,6 @@ const checkAdminLogin = require("../Authentications/checkAdminLogin.js");
 const checkLogin = require("../Authentications/checkLogin.js");
 const userSchema = require("../collectionSchemas/userSchema.js");
 const User = new mongoose.model("User", userSchema);
-const seatSchema = require("../collectionSchemas/seatSchema.js");
-const Seat = new mongoose.model("Seat", seatSchema);
 
 // User SIGN-UP & LOG IN
 router.post("/signup", checkAdminLogin, async (req, res) => {
@@ -108,7 +106,6 @@ router.get("/update", checkAdminLogin, async (req, res) => {
       });
     });
 });
-// GET
 router.get("/search", checkAdminLogin, async (req, res) => {
   await User.find({
     $or: [{ matric: req.query.matric }, { name: req.query.name }],
@@ -124,65 +121,12 @@ router.get("/search", checkAdminLogin, async (req, res) => {
       });
     });
 });
-
-// GET all with academic data
-/* router.get("/data", checkAdminLogin, checkLogin, async (req, res) => {
-  let query = {};
-  await User.find(query)
-    .sort({ _id: -1 })
-    .select("matric name enroll sem dept room email")
-    .then((data) => {
-      res.status(200).json(data);
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
-      });
-    });
-}); */
-
-// GET all rent & meal status
-/* router.get("/rent", checkAdminLogin, checkLogin, async (req, res) => {
-  let query = {};
-  await User.find(query)
-    .sort({ _id: -1 })
-    .select("matric dept room rent")
-    .then((data) => {
-      res.status(200).json(data);
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
-      });
-    });
-});
-router.get("/meal", checkAdminLogin, checkLogin, async (req, res) => {
-  let query = {};
-  await User.find(query)
-    .sort({ _id: -1 })
-    .select("matric dept room meal coupon")
-    .then((data) => {
-      res.status(200).json(data);
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
-      });
-    });
-}); */
-
-// GET room by Id
 router.get("/attendance", checkAdminLogin, async (req, res) => {
-  const page = req.query.page;
-  const size = req.query.size;
-  const total = await User.estimatedDocumentCount();
   await User.find({})
     .populate("attendance", "date time")
     .select("matric dept attendance room")
-    .skip(page * size)
-    .limit(size)
     .then((data) => {
-      res.status(200).json({ data, total });
+      res.status(200).json(data);
     })
     .catch(() => {
       res.status(400).json({
@@ -190,37 +134,9 @@ router.get("/attendance", checkAdminLogin, async (req, res) => {
       });
     });
 });
-// GET room by Id
-/* router.get("/room/:id", checkAdminLogin, checkLogin, async (req, res) => {
-  await User.find({ _id: req.params.id })
-    .populate("room", "room")
-    .select("matric dept room sem")
-    .then((data) => {
-      res.status(200).json(data);
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
-      });
-    });
-}); */
 
-// GET user payment records by ID
-/* router.get("/payments/:id", checkAdminLogin, checkLogin, async (req, res) => {
-  await User.find({ _id: req.params.id })
-    .populate("payments")
-    .select("matric dept room rent")
-    .then((data) => {
-      res.status(200).json(data);
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
-      });
-    });
-}); */
 
-// UPDATE user room no. by Id
+// UPDATE user data
 router.put("/update/:id", checkAdminLogin, async (req, res) => {
   await User.updateOne(
     { _id: req.params.id },
@@ -266,6 +182,7 @@ router.put("/account/:id", checkAdminLogin, async (req, res) => {
       .then(() => res.json("Account validated"))
       .catch(() => res.json("Could not Update"));
 });
+
 
 // DELETE user record
 router.delete("/:id", checkAdminLogin, async (req, res) => {
