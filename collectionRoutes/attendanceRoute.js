@@ -22,7 +22,13 @@ router.post("/", checkLogin, async (req, res) => {
     await User.updateOne(
       { _id: req.userId },
       {
-        $push: { attendance: newAttendance._id },
+        // $push: { attendance: newAttendance._id },
+        $push: {
+          edit: {
+            $each: [{ attendance: newAttendance._id }],
+            $sort: -1,
+          },
+        },
       }
     )
       .then(() => res.json({ message: "Attendance Marked" }))

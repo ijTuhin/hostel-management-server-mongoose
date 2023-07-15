@@ -95,8 +95,7 @@ router.post("/", async (req, res) => {
           error: "Oops! Something went wrong!",
         });
       });
-  }
-  else res.json("Utility Record exists")
+  } else res.json("Utility Record exists");
 });
 
 // UPDATE utility bill & status
@@ -140,7 +139,15 @@ router.put("/pay-due/:id", async (req, res) => {
   );
   await BalanceSheet.updateOne(
     { status: 1 },
-    { $push: { utility: req.params.id } }
+    {
+      // $push: { utility: req.params.id }
+      $push: {
+        edit: {
+          $each: [{ utility: req.params.id }],
+          $sort: -1,
+        },
+      },
+    }
   )
     .then(() => {
       res.status(200).json({

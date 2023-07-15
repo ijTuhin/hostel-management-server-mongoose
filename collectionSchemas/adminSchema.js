@@ -28,6 +28,15 @@ const adminSchema = mongoose.Schema({
       ref: "Message",
     },
   ],
+  edit: [
+    {
+      user: { type: mongoose.Types.ObjectId, ref: "User" },
+      address: String,
+      thana: String,
+      district: String,
+      phone: String,
+    },
+  ],
 });
 
 module.exports = adminSchema;

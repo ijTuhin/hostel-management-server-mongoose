@@ -9,7 +9,20 @@ const userSchema = require("../collectionSchemas/userSchema.js");
 const User = new mongoose.model("User", userSchema);
 const balanceSheetSchema = require("../collectionSchemas/balanceSheetSchema.js");
 const BalanceSheet = new mongoose.model("BalanceSheet", balanceSheetSchema);
-const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+const months = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 const month = months[new Date().getMonth()] + "-" + new Date().getFullYear();
 
 // POST Meal Bill Payment
@@ -39,7 +52,13 @@ router.post("/meal-package", checkLogin, async (req, res) => {
           await User.updateOne(
             { _id: req.userId },
             {
-              $push: { payments: newPayment._id },
+              // $push: { payments: newPayment._id },
+              $push: {
+                edit: {
+                  $each: [{ payments: newPayment._id }],
+                  $sort: -1,
+                },
+              },
               $set: {
                 meal: 1,
                 coupon: user.coupon + newPayment.package * 3,
@@ -48,7 +67,15 @@ router.post("/meal-package", checkLogin, async (req, res) => {
           );
           await BalanceSheet.updateOne(
             { status: 1 },
-            { $push: { mealBill: newPayment._id } }
+            {
+              // $push: { mealBill: newPayment._id }
+              $push: {
+                edit: {
+                  $each: [{ mealBill: newPayment._id }],
+                  $sort: -1,
+                },
+              },
+            }
           );
           res.json(
             `Payment Successfull with ${newPayment.package} days package`
@@ -75,8 +102,14 @@ router.post("/seat-rent", checkLogin, async (req, res) => {
     await User.updateOne(
       { _id: req.userId },
       {
+        // $push: {
+        //   payments: newPayment._id,
+        // },
         $push: {
-          payments: newPayment._id,
+          edit: {
+            $each: [{ payments: newPayment._id }],
+            $sort: -1,
+          },
         },
         $set: {
           rent: 1,
@@ -85,7 +118,15 @@ router.post("/seat-rent", checkLogin, async (req, res) => {
     );
     await BalanceSheet.updateOne(
       { status: 1 },
-      { $push: { seatRent: newPayment._id } }
+      {
+        // $push: { seatRent: newPayment._id }
+        $push: {
+          edit: {
+            $each: [{ seatRent: newPayment._id }],
+            $sort: -1,
+          },
+        },
+      }
     )
       .then(() => {
         res.status(201).json({

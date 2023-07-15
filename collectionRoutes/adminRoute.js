@@ -4,7 +4,10 @@ const jwt = require("jsonwebtoken");
 const router = express.Router();
 const adminSchema = require("../collectionSchemas/adminSchema.js");
 const Admin = new mongoose.model("Admin", adminSchema);
+const userSchema = require("../collectionSchemas/userSchema.js");
+const User = new mongoose.model("User", userSchema);
 const checkAdminLogin = require("../Authentications/checkAdminLogin.js");
+const checkLogin = require("../Authentications/checkLogin.js");
 const messageSchema = require("../collectionSchemas/messageSchema.js");
 const Message = new mongoose.model("Message", messageSchema);
 
@@ -115,6 +118,56 @@ router.post("/login", async (req, res) => {
   } catch {
     res.status(401).json("Authentication Failed");
   }
+});
+
+router.post("/edit-request", checkLogin, async (req, res) => {
+  await Admin.updateMany(
+    { role: "warden" },
+    {
+      $push: {
+        edit: {
+          $each: [
+            {
+              ...req.body,
+              user: req.userId,
+            },
+          ],
+          $sort: -1,
+        },
+      },
+    }
+  )
+    .then(() => {
+      res.status(200).json(`Edit request posted to Warden`);
+      console.log(`Edit request posted to Warden`);
+    })
+    .catch(() => res.json("Oops! Something went wrong!"));
+});
+
+router.post("/request-approve/:id", checkAdminLogin, async (req, res) => {
+  const data = await Admin.findOne({
+    role: "warden",
+  }).select("edit");
+  const check = data.edit.find((i) => i.user === req.params.id);
+  if (check) {
+    await User.updateOne(
+      { _id: req.params.id },
+      {
+        $set: {
+          phone: check.phone,
+          thana: check.thana,
+          district: check.district,
+          address: check.address,
+        },
+      }
+    );
+    await Admin.updateMany(
+      { role: "warden" },
+      {
+        $pull: { edit: { user: req.params.id } },
+      }
+    ).then(() => res.status(200).json("true"));
+  } else res.json(`can't fine ${req.params.id} data`);
 });
 
 // GET Messages

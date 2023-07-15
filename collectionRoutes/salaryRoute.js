@@ -56,14 +56,28 @@ router.post("/:id", checkAdminLogin, async (req, res) => {
   await Staff.updateOne(
     { _id: req.params.id },
     {
+      // $push: {
+      //   record: newSalary._id,
+      // },
       $push: {
-        record: newSalary._id,
+        edit: {
+          $each: [{ record: newSalary._id }],
+          $sort: -1,
+        },
       },
     }
   );
   await BalanceSheet.updateOne(
     { status: 1 },
-    { $push: { salary: newSalary._id } }
+    {
+      // $push: { salary: newSalary._id }
+      $push: {
+        edit: {
+          $each: [{ salary: newSalary._id }],
+          $sort: -1,
+        },
+      },
+    }
   )
     .then(() => {
       res.json("Data insertion successful");

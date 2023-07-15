@@ -63,7 +63,13 @@ router.post("/", checkLogin, async (req, res) => {
       await User.updateOne(
         { _id: req.userId },
         {
-          $push: { orders: newMeal._id },
+          // $push: { orders: newMeal._id },
+          $push: {
+            edit: {
+              $each: [{ orders: newMeal._id }],
+              $sort: -1,
+            },
+          },
           $set: {
             coupon: user.coupon - 1,
           },
@@ -138,7 +144,7 @@ router.get("/", checkAdminLogin, checkLogin, async (req, res) => {
     query = {
       meal: req.query.meal,
       date: req.query.date,
-    }; 
+    };
   } else if (req.query.date) {
     query = { date: req.query.date };
   }

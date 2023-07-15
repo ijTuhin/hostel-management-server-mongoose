@@ -26,7 +26,13 @@ router.post("/", checkAdminLogin, async (req, res) => {
   await Admin.updateOne(
     { _id: req.adminId },
     {
-      $push: { posted: newNotice._id },
+      // $push: { posted: newNotice._id },
+      $push: {
+        edit: {
+          $each: [{ posted: newNotice._id }],
+          $sort: -1,
+        },
+      },
     }
   )
     .then(() => res.json("Notice Marked"))
@@ -36,7 +42,13 @@ router.post("/", checkAdminLogin, async (req, res) => {
     await User.updateOne(
       { matric: req.body.to },
       {
-        $push: { notice: newNotice._id },
+        // $push: { notice: newNotice._id },
+        $push: {
+          edit: {
+            $each: [{ notice: newNotice._id }],
+            $sort: -1,
+          },
+        },
       }
     );
   } else if (req.body.to === "warden" || req.body.to === "finance") {
@@ -45,14 +57,26 @@ router.post("/", checkAdminLogin, async (req, res) => {
       await Admin.updateMany(
         { role: req.body.to },
         {
-          $push: { notice: newNotice._id },
+          // $push: { notice: newNotice._id },
+          $push: {
+            edit: {
+              $each: [{ notice: newNotice._id }],
+              $sort: -1,
+            },
+          },
         }
       );
     } else {
       await Admin.updateMany(
         { $nor: [{ _id: senderAdmin._id }], role: req.body.to },
         {
-          $push: { notice: newNotice._id },
+          // $push: { notice: newNotice._id },
+          $push: {
+            edit: {
+              $each: [{ notice: newNotice._id }],
+              $sort: -1,
+            },
+          },
         }
       );
     }
@@ -60,7 +84,13 @@ router.post("/", checkAdminLogin, async (req, res) => {
     await User.updateMany(
       {},
       {
-        $push: { notice: newNotice._id },
+        // $push: { notice: newNotice._id },
+        $push: {
+          edit: {
+            $each: [{ notice: newNotice._id }],
+            $sort: -1,
+          },
+        },
       }
     );
   }

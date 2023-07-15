@@ -18,7 +18,13 @@ router.post("/", checkLogin, async (req, res) => {
   await User.updateOne(
     { _id: req.userId },
     {
-      $push: { message: newMessage._id },
+      // $push: { message: newMessage._id },
+      $push: {
+        edit: {
+          $each: [{ message: newMessage._id }],
+          $sort: -1,
+        },
+      },
     }
   )
     .then(() => res.json(`Message sent to ${req.body.to}`))
@@ -27,14 +33,26 @@ router.post("/", checkLogin, async (req, res) => {
     await Admin.updateOne(
       { role: req.body.to },
       {
-        $push: { message: newMessage._id },
+        // $push: { message: newMessage._id },
+        $push: {
+          edit: {
+            $each: [{ message: newMessage._id }],
+            $sort: -1,
+          },
+        },
       }
     );
   } else {
     await Admin.updateMany(
-      { $nor: [{ role: "meal"}] },
+      { $nor: [{ role: "meal" }] },
       {
-        $push: { message: newMessage._id },
+        // $push: { message: newMessage._id },
+        $push: {
+          edit: {
+            $each: [{ message: newMessage._id }],
+            $sort: -1,
+          },
+        },
       }
     );
   }

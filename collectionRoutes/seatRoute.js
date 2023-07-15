@@ -142,8 +142,14 @@ router.put("/:matric/allocate/:room", checkAdminLogin, async (req, res) => {
     { room: req.params.room },
     {
       $set: { vacant: vacant.vacant - 1, vacancy: status },
+      // $push: {
+      //   member: req.params.matric,
+      // },
       $push: {
-        member: req.params.matric,
+        edit: {
+          $each: [{ member: req.params.matric }],
+          $sort: -1,
+        },
       },
     }
   );

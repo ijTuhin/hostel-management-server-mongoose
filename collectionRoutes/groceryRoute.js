@@ -14,7 +14,15 @@ router.post("/", async (req, res) => {
     const newGrocery = await new Grocery(req.body).save();
     await BalanceSheet.updateOne(
       { status: 1 },
-      { $push: { grocery: newGrocery._id } }
+      {
+        // $push: { grocery: newGrocery._id }
+        $push: {
+          edit: {
+            $each: [{ grocery: newGrocery._id }],
+            $sort: -1,
+          },
+        },
+      }
     )
       .then((data) => res.json(data))
       .catch(() => res.json("Please check the error!!"));
@@ -67,7 +75,16 @@ router.put("/", async (req, res) => {
   } else {
     await Grocery.updateOne(
       { date: req.query.date },
-      { $push: { list: req.body.list }, $set: { total } }
+      {
+        // $push: { list: req.body.list },
+        $push: {
+          edit: {
+            $each: [{ list: req.body.list }],
+            $sort: -1,
+          },
+        },
+        $set: { total },
+      }
     )
       .then(() => res.json("New Grocery item added"))
       .catch(() => res.json("Please check the error!!3"));
