@@ -11,10 +11,8 @@ const User = new mongoose.model("User", userSchema);
 
 // POST new Message
 router.post("/", checkLogin, async (req, res) => {
-  let text = `Assalamu Alaikum ${req.body.to} Sir/ Ma'am, ${req.body.message} Thank You.`;
   const newMessage = await new Message({
     ...req.body,
-    message: text,
     sender: req.userId,
   }).save();
   await User.updateOne(
@@ -22,15 +20,24 @@ router.post("/", checkLogin, async (req, res) => {
     {
       $push: { message: newMessage._id },
     }
-  );
-  await Admin.updateOne(
-    { role: req.body.to },
-    {
-      $push: { message: newMessage._id },
-    }
   )
     .then(() => res.json(`Message sent to ${req.body.to}`))
     .catch(() => res.json("Oops! Something went wrong!"));
+  if (req.body.to === "warden") {
+    await Admin.updateOne(
+      { role: req.body.to },
+      {
+        $push: { message: newMessage._id },
+      }
+    );
+  } else {
+    await Admin.updateMany(
+      { $nor: [{ role: "meal"}] },
+      {
+        $push: { message: newMessage._id },
+      }
+    );
+  }
 });
 
 // GET by sender

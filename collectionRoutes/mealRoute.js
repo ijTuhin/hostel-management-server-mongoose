@@ -56,7 +56,7 @@ router.post("/", checkLogin, async (req, res) => {
     else {
       var newMeal = await new Meal({
         ...req.body,
-        meal: meal,
+        // meal: meal,
         date: day,
         user: req.userId,
       }).save();

@@ -8,7 +8,8 @@ const paymentSchema = mongoose.Schema({
     enum: ["meal", "rent"],
   },
   bill: Number,
-  transaction: String,
+  trxID: String,
+  phone: String,
   package: {
     type: Number,
     enum: [2, 7, 30]

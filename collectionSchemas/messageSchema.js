@@ -5,9 +5,13 @@ const messageSchema = mongoose.Schema({
     type: String,
     required: true,
   },
-  message: {
+  topic: {
     type: String,
     required: true,
+  },
+  note: {
+    type: String,
+    default: "N/A",
   },
   date: {
     type: String,
@@ -23,6 +27,10 @@ const messageSchema = mongoose.Schema({
       type: mongoose.Types.ObjectId,
       ref: "Admin",
     },
+  },
+  solved: {
+    type: Boolean,
+    default: false,
   },
 });
 

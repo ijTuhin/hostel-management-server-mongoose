@@ -27,7 +27,7 @@ router.post("/meal-package", checkLogin, async (req, res) => {
       package: 2,
     })
       .then(async (data) => {
-        if (data.length < 3) {
+        if (data.length < 3 || req.body.package !== 2) {
           const user = await User.findOne({ _id: req.userId });
           const package = req.body.package;
           const newPayment = await new Payment({
@@ -68,6 +68,7 @@ router.post("/seat-rent", checkLogin, async (req, res) => {
   if (!payment) {
     var newPayment = await new Payment({
       ...req.body,
+      bill: 2500,
       item: "rent",
       user: req.userId,
     }).save();

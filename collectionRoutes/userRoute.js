@@ -8,7 +8,20 @@ const userSchema = require("../collectionSchemas/userSchema.js");
 const User = new mongoose.model("User", userSchema);
 const paymentSchema = require("../collectionSchemas/paymentSchema.js");
 const Payment = new mongoose.model("Payment", paymentSchema);
-const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+const months = [
+  "Jan",
+  "Feb",
+  "Mar",
+  "Apr",
+  "May",
+  "Jun",
+  "Jul",
+  "Aug",
+  "Sep",
+  "Oct",
+  "Nov",
+  "Dec",
+];
 const month = months[new Date().getMonth()] + "-" + new Date().getFullYear();
 
 // User SIGN-UP & LOG IN
@@ -46,8 +59,10 @@ router.post("/login", async (req, res) => {
 
         res.status(200).json({
           token: token,
+          time: Date.now().toString(),
           message: "Login Successful",
         });
+        console.log(token)
       } else res.status(401).json("Authentication Failed");
     } else res.status(401).json("Authentication Failed");
   } catch {
@@ -55,8 +70,45 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// Get individual user data on Load
+router.get("/my-data", checkLogin, async (req, res) => {
+  const user = await User.findOne({ _id: req.userId })
+    .select({
+      password: 0,
+      meal: 0,
+      rent: 0,
+      __v: 0,
+    })
+    .populate("payments")
+    .populate("orders")
+    .populate("attendance")
+    .populate({
+      path: "room",
+      select:"room member",
+      populate: {
+        path: "member",
+        select:"name dept sem matric"
+      },
+    })
+    .populate("notice")
+    .populate("message")
+  .then((data) => {
+    res.status(200).json(data);
+    console.log("Got data")
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(400).json({
+      error: "Oops! Something went wrong!",
+    });
+    res.status(500).json({
+      error: "Oops! Status 500!! Something went wrong!",
+    });
+  });
+});
+
 // GET data
-router.get("/", checkAdminLogin, async (req, res) => {
+router.get("/", /* checkAdminLogin, */ async (req, res) => {
   await User.find({})
     .sort({ _id: -1 })
     .select("matric name enroll sem dept room email account")

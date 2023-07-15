@@ -19,7 +19,7 @@ const userSchema = mongoose.Schema({
     default: true,
   },
   room: {
-    type: mongoose.Schema.Types.Number,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Seat",
     default: 0,
   },
