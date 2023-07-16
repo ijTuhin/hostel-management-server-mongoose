@@ -52,37 +52,26 @@ router.post("/meal-package", checkLogin, async (req, res) => {
           await User.updateOne(
             { _id: req.userId },
             {
-              // $push: { payments: newPayment._id },
-              $push: {
-                edit: {
-                  $each: [{ payments: newPayment._id }],
-                  $sort: -1,
-                },
-              },
+              $push: { payments: newPayment._id },
               $set: {
                 meal: 1,
-                coupon: user.coupon + newPayment.package * 3,
+                coupon: user.coupon + newPayment.package*3,
               },
             }
           );
           await BalanceSheet.updateOne(
             { status: 1 },
             {
-              // $push: { mealBill: newPayment._id }
-              $push: {
-                edit: {
-                  $each: [{ mealBill: newPayment._id }],
-                  $sort: -1,
-                },
-              },
+              $push: { mealBill: newPayment._id }
             }
           );
           res.json(
             `Payment Successfull with ${newPayment.package} days package`
           );
+          console.log(`Payment Successfull with ${newPayment.package} days package`)
         } else res.json(`Oopss! Payment unsuccessfull!`);
       })
-      .catch(() => res.json(`Oopss! Error!`));
+      .catch(() => res.json(req.body));
   }
 });
 // POST Seat Rent Payment
@@ -102,14 +91,8 @@ router.post("/seat-rent", checkLogin, async (req, res) => {
     await User.updateOne(
       { _id: req.userId },
       {
-        // $push: {
-        //   payments: newPayment._id,
-        // },
         $push: {
-          edit: {
-            $each: [{ payments: newPayment._id }],
-            $sort: -1,
-          },
+          payments: newPayment._id,
         },
         $set: {
           rent: 1,
@@ -119,13 +102,7 @@ router.post("/seat-rent", checkLogin, async (req, res) => {
     await BalanceSheet.updateOne(
       { status: 1 },
       {
-        // $push: { seatRent: newPayment._id }
-        $push: {
-          edit: {
-            $each: [{ seatRent: newPayment._id }],
-            $sort: -1,
-          },
-        },
+        $push: { seatRent: newPayment._id }
       }
     )
       .then(() => {
@@ -139,30 +116,6 @@ router.post("/seat-rent", checkLogin, async (req, res) => {
         });
       });
   }
-});
-
-// GET by payment lists by user Id
-router.get("/meal/:id", checkLogin, async (req, res) => {
-  await Payment.find({ user: req.params.id, item: "meal" })
-    .then((data) => {
-      res.status(200).json(data);
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
-      });
-    });
-});
-router.get("/rent/:id", checkLogin, async (req, res) => {
-  await Payment.find({ user: req.params.id, item: "rent" })
-    .then((data) => {
-      res.status(200).json(data);
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
-      });
-    });
 });
 
 // GET payment record from Admin Side
@@ -190,20 +143,5 @@ router.get("/", checkAdminLogin, async (req, res) => {
       });
     });
 });
-
-// DELETE by ID
-/* router.delete("/:id", checkAdminLogin, async (req, res) => {
-  await Payment.deleteOne({ _id: req.params.id })
-    .then(() => {
-      res.status(200).json({
-        result: "Data deletion successful",
-      });
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
-      });
-    });
-}); */
 
 module.exports = router;

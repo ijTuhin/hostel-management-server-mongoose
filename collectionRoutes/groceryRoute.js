@@ -15,13 +15,7 @@ router.post("/", async (req, res) => {
     await BalanceSheet.updateOne(
       { status: 1 },
       {
-        // $push: { grocery: newGrocery._id }
-        $push: {
-          edit: {
-            $each: [{ grocery: newGrocery._id }],
-            $sort: -1,
-          },
-        },
+        $push: { grocery: newGrocery._id },
       }
     )
       .then((data) => res.json(data))
@@ -76,13 +70,7 @@ router.put("/", async (req, res) => {
     await Grocery.updateOne(
       { date: req.query.date },
       {
-        // $push: { list: req.body.list },
-        $push: {
-          edit: {
-            $each: [{ list: req.body.list }],
-            $sort: -1,
-          },
-        },
+        $push: { list: req.body.list },
         $set: { total },
       }
     )

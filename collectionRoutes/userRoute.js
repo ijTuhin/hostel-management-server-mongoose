@@ -8,6 +8,16 @@ const userSchema = require("../collectionSchemas/userSchema.js");
 const User = new mongoose.model("User", userSchema);
 const paymentSchema = require("../collectionSchemas/paymentSchema.js");
 const Payment = new mongoose.model("Payment", paymentSchema);
+const mealSchema = require("../collectionSchemas/mealSchema");
+const Meal = new mongoose.model("Meal", mealSchema);
+const messageSchema = require("../collectionSchemas/messageSchema.js");
+const Message = new mongoose.model("Message", messageSchema);
+const noticeSchema = require("../collectionSchemas/noticeSchema.js");
+const Notice = new mongoose.model("Notice", noticeSchema);
+const seatSchema = require("../collectionSchemas/seatSchema.js");
+const Seat = new mongoose.model("Seat", seatSchema);
+const attendanceSchema = require("../collectionSchemas/attendanceSchema");
+const Attendance = new mongoose.model("Attendance", attendanceSchema);
 const months = [
   "Jan",
   "Feb",
@@ -62,7 +72,7 @@ router.post("/login", async (req, res) => {
           time: Date.now().toString(),
           message: "Login Successful",
         });
-        console.log(token)
+        console.log(token);
       } else res.status(401).json("Authentication Failed");
     } else res.status(401).json("Authentication Failed");
   } catch {
@@ -72,43 +82,58 @@ router.post("/login", async (req, res) => {
 
 // Get individual user data on Load
 router.get("/my-data", checkLogin, async (req, res) => {
-  const user = await User.findOne({ _id: req.userId })
-    .select({
-      password: 0,
-      meal: 0,
-      rent: 0,
-      __v: 0,
-    })
-    .populate("payments")
-    .populate("orders")
-    .populate("attendance")
-    .populate({
-      path: "room",
-      select:"room member",
-      populate: {
-        path: "member",
-        select:"name dept sem matric"
-      },
-    })
-    .populate("notice")
-    .populate("message")
-  .then((data) => {
-    res.status(200).json(data);
-    console.log("Got data")
-  })
-  .catch((err) => {
-    console.error(err);
-    res.status(400).json({
-      error: "Oops! Something went wrong!",
-    });
-    res.status(500).json({
-      error: "Oops! Status 500!! Something went wrong!",
-    });
+  const user = await User.findOne({ _id: req.userId }).select({
+    password: 0,
+    meal: 0,
+    rent: 0,
+    __v: 0,
+    payments: 0,
+    orders: 0,
+    attendance: 0,
+    notice: 0,
+    message: 0,
   });
+  const message = await Message.find({ sender: req.userId })
+    .populate("reply.from", "name")
+    .sort({ _id: -1 });
+  const notice = await Notice.find({
+    $or: [{ to: req.userId }, { to: "All Users" }],
+  })
+    .populate("sender", "role name")
+    .sort({ _id: -1 });
+  const payments = await Payment.find({ user: req.userId }).sort({ _id: -1 });
+  const orders = await Meal.find({ user: req.userId }).sort({ _id: -1 });
+  const attendance = await Attendance.find({ user: req.userId }).sort({
+    _id: -1,
+  });
+  const room = await Seat.findOne({ _id: user.room })
+    .populate("member", "name dept sem matric")
+    .select("room member")
+    .then((data) => {
+      res.status(200).json({
+        user,
+        payments,
+        orders,
+        attendance,
+        notice,
+        message,
+        room: data,
+      });
+      console.log("Got data");
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(400).json({
+        error: "Oops! Something went wrong!",
+      });
+      res.status(500).json({
+        error: "Oops! Status 500!! Something went wrong!",
+      });
+    });
 });
 
 // GET data
-router.get("/", /* checkAdminLogin, */ async (req, res) => {
+router.get("/", checkAdminLogin, async (req, res) => {
   await User.find({})
     .sort({ _id: -1 })
     .select("matric name enroll sem dept room email account")

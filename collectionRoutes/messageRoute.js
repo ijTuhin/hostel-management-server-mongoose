@@ -18,13 +18,7 @@ router.post("/", checkLogin, async (req, res) => {
   await User.updateOne(
     { _id: req.userId },
     {
-      // $push: { message: newMessage._id },
-      $push: {
-        edit: {
-          $each: [{ message: newMessage._id }],
-          $sort: -1,
-        },
-      },
+      $push: { message: newMessage._id },
     }
   )
     .then(() => res.json(`Message sent to ${req.body.to}`))
@@ -33,38 +27,17 @@ router.post("/", checkLogin, async (req, res) => {
     await Admin.updateOne(
       { role: req.body.to },
       {
-        // $push: { message: newMessage._id },
-        $push: {
-          edit: {
-            $each: [{ message: newMessage._id }],
-            $sort: -1,
-          },
-        },
+        $push: { message: newMessage._id },
       }
     );
   } else {
     await Admin.updateMany(
       { $nor: [{ role: "meal" }] },
       {
-        // $push: { message: newMessage._id },
-        $push: {
-          edit: {
-            $each: [{ message: newMessage._id }],
-            $sort: -1,
-          },
-        },
+        $push: { message: newMessage._id },
       }
     );
   }
-});
-
-// GET by sender
-router.get("/", checkLogin, async (req, res) => {
-  await Message.find({ sender: req.userId })
-    .populate("reply.from", "name")
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch(() => res.json("Oops! Something went wrong!"));
 });
 
 // DELETE message by ID

@@ -13,9 +13,9 @@ const BalanceSheet = new mongoose.model("BalanceSheet", balanceSheetSchema);
 router.get("/", checkAdminLogin, async (req, res) => {
   let query = {};
   if (req.query.month) {
-    query = { month: req.query.month }; //http://localhost:3001/salary?month=${month}
+    query = { month: req.query.month };
   } else if (req.query.date) {
-    query = { date: req.query.date }; //http://localhost:3001/salary?date=${date}
+    query = { date: req.query.date };
   }
   await Salary.find(query)
     .populate("staff", "name position phone")
@@ -56,27 +56,15 @@ router.post("/:id", checkAdminLogin, async (req, res) => {
   await Staff.updateOne(
     { _id: req.params.id },
     {
-      // $push: {
-      //   record: newSalary._id,
-      // },
       $push: {
-        edit: {
-          $each: [{ record: newSalary._id }],
-          $sort: -1,
-        },
+        record: newSalary._id,
       },
     }
   );
   await BalanceSheet.updateOne(
     { status: 1 },
     {
-      // $push: { salary: newSalary._id }
-      $push: {
-        edit: {
-          $each: [{ salary: newSalary._id }],
-          $sort: -1,
-        },
-      },
+      $push: { salary: newSalary._id },
     }
   )
     .then(() => {

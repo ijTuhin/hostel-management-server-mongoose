@@ -56,20 +56,13 @@ router.post("/", checkLogin, async (req, res) => {
     else {
       var newMeal = await new Meal({
         ...req.body,
-        // meal: meal,
         date: day,
         user: req.userId,
       }).save();
       await User.updateOne(
         { _id: req.userId },
         {
-          // $push: { orders: newMeal._id },
-          $push: {
-            edit: {
-              $each: [{ orders: newMeal._id }],
-              $sort: -1,
-            },
-          },
+          $push: { orders: newMeal._id },
           $set: {
             coupon: user.coupon - 1,
           },
@@ -138,7 +131,7 @@ router.delete("/:id", checkAdminLogin, checkLogin, async (req, res) => {
 });
 
 // GET all
-router.get("/", checkAdminLogin, checkLogin, async (req, res) => {
+router.get("/", checkAdminLogin, async (req, res) => {
   let query = {};
   if (req.query.date && req.query.meal) {
     query = {
@@ -148,17 +141,11 @@ router.get("/", checkAdminLogin, checkLogin, async (req, res) => {
   } else if (req.query.date) {
     query = { date: req.query.date };
   }
-  if (req.adminId)
-    await Meal.find(query)
-      .sort({ _id: -1 })
-      .populate("user", "matric dept room name")
-      .then((data) => res.json(data))
-      .catch(() => res.json("Oops! Something went wrong!"));
-  if (req.userId)
-    await Meal.find({ user: req.userId })
-      .sort({ _id: -1 })
-      .then((data) => res.json(data))
-      .catch(() => res.json("Oops! Something went wrong!"));
+  await Meal.find(query)
+    .sort({ _id: -1 })
+    .populate("user", "matric dept room name")
+    .then((data) => res.json(data))
+    .catch(() => res.json("Oops! Something went wrong!"));
 });
 
 module.exports = router;

@@ -11,7 +11,7 @@ const User = new mongoose.model("User", userSchema);
 router.get("/", checkAdminLogin, async (req, res) => {
   let query = {};
   if (req.query.vacancy) {
-    query = { vacancy: req.query.vacancy }; //http://localhost:3001/seat?vacancy=${vacancy}
+    query = { vacancy: req.query.vacancy };
   }
   await Seat.find(query)
     .sort({ _id: -1 })
@@ -37,7 +37,6 @@ router.get("/vacant", checkAdminLogin, async (req, res) => {
 // GET room details
 router.get("/:id", checkAdminLogin, async (req, res) => {
   await Seat.find({ _id: req.params.id })
-    // .populate("member", "matric name dept sem")
     .then((data) => {
       res.status(200).json(data);
     })
@@ -142,15 +141,15 @@ router.put("/:matric/allocate/:room", checkAdminLogin, async (req, res) => {
     { room: req.params.room },
     {
       $set: { vacant: vacant.vacant - 1, vacancy: status },
-      // $push: {
-      //   member: req.params.matric,
-      // },
       $push: {
-        edit: {
-          $each: [{ member: req.params.matric }],
-          $sort: -1,
-        },
+        member: req.params.matric,
       },
+      // $push: {
+      //   edit: {
+      //     $each: [{ member: req.params.matric }],
+      //     $sort: -1,
+      //   },
+      // },
     }
   );
   await User.updateOne(

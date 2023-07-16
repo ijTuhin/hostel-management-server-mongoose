@@ -22,13 +22,7 @@ router.post("/", checkLogin, async (req, res) => {
     await User.updateOne(
       { _id: req.userId },
       {
-        // $push: { attendance: newAttendance._id },
-        $push: {
-          edit: {
-            $each: [{ attendance: newAttendance._id }],
-            $sort: -1,
-          },
-        },
+        $push: { attendance: newAttendance._id },
       }
     )
       .then(() => res.json({ message: "Attendance Marked" }))
@@ -40,14 +34,6 @@ router.post("/", checkLogin, async (req, res) => {
 router.delete("/:id", checkLogin, async (req, res) => {
   await Attendance.deleteOne({ _id: req.params.id })
     .then(() => res.json("Attendance deleted"))
-    .catch(() => res.json("Oops! Something went wrong!"));
-});
-
-// GET by id
-router.get("/:id", checkLogin, async (req, res) => {
-  await Attendance.findOne({ _id: req.params.id })
-    .populate("user", "matric dept room name")
-    .then((data) => res.json(data))
     .catch(() => res.json("Oops! Something went wrong!"));
 });
 

@@ -140,13 +140,7 @@ router.put("/pay-due/:id", async (req, res) => {
   await BalanceSheet.updateOne(
     { status: 1 },
     {
-      // $push: { utility: req.params.id }
-      $push: {
-        edit: {
-          $each: [{ utility: req.params.id }],
-          $sort: -1,
-        },
-      },
+      $push: { utility: req.params.id }
     }
   )
     .then(() => {

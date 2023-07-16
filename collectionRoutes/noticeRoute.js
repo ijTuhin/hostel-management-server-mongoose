@@ -16,7 +16,6 @@ router.post("/", checkAdminLogin, async (req, res) => {
   function isMatric(str) {
     return /[0-9]/.test(str);
   }
-  const notices = await Notice.find({});
   const newNotice = await new Notice({
     ...req.body,
     notice: text,
@@ -26,13 +25,7 @@ router.post("/", checkAdminLogin, async (req, res) => {
   await Admin.updateOne(
     { _id: req.adminId },
     {
-      // $push: { posted: newNotice._id },
-      $push: {
-        edit: {
-          $each: [{ posted: newNotice._id }],
-          $sort: -1,
-        },
-      },
+      $push: { posted: newNotice._id },
     }
   )
     .then(() => res.json("Notice Marked"))
@@ -42,13 +35,7 @@ router.post("/", checkAdminLogin, async (req, res) => {
     await User.updateOne(
       { matric: req.body.to },
       {
-        // $push: { notice: newNotice._id },
-        $push: {
-          edit: {
-            $each: [{ notice: newNotice._id }],
-            $sort: -1,
-          },
-        },
+        $push: { notice: newNotice._id },
       }
     );
   } else if (req.body.to === "warden" || req.body.to === "finance") {
@@ -57,26 +44,14 @@ router.post("/", checkAdminLogin, async (req, res) => {
       await Admin.updateMany(
         { role: req.body.to },
         {
-          // $push: { notice: newNotice._id },
-          $push: {
-            edit: {
-              $each: [{ notice: newNotice._id }],
-              $sort: -1,
-            },
-          },
+          $push: { notice: newNotice._id },
         }
       );
     } else {
       await Admin.updateMany(
         { $nor: [{ _id: senderAdmin._id }], role: req.body.to },
         {
-          // $push: { notice: newNotice._id },
-          $push: {
-            edit: {
-              $each: [{ notice: newNotice._id }],
-              $sort: -1,
-            },
-          },
+          $push: { notice: newNotice._id },
         }
       );
     }
@@ -84,13 +59,7 @@ router.post("/", checkAdminLogin, async (req, res) => {
     await User.updateMany(
       {},
       {
-        // $push: { notice: newNotice._id },
-        $push: {
-          edit: {
-            $each: [{ notice: newNotice._id }],
-            $sort: -1,
-          },
-        },
+        $push: { notice: newNotice._id },
       }
     );
   }
@@ -113,36 +82,20 @@ router.delete("/:id", checkAdminLogin, async (req, res) => {
 });
 
 // GET notice
-router.get("/get", checkAdminLogin, checkLogin, async (req, res) => {
-  if (req.adminId) {
-    await Admin.findOne({ _id: req.adminId })
-      .sort({ _id: -1 })
-      .select("notice")
-      .populate({
-        path: "notice",
-        select: "title sender notice",
-        populate: {
-          path: "sender",
-          select: "role",
-        },
-      })
-      .then((data) => res.json(data.notice))
-      .catch(() => res.json("Oops! Something went wrong!"));
-  } else if (req.userId) {
-    await User.findOne({ _id: req.userId })
-      .sort({ _id: -1 })
-      .select("notice")
-      .populate({
-        path: "notice",
-        select: "title sender notice",
-        populate: {
-          path: "sender",
-          select: "role",
-        },
-      })
-      .then((data) => res.json(data.notice))
-      .catch(() => res.json("Oops! Something went wrong!"));
-  }
+router.get("/get", checkAdminLogin, async (req, res) => {
+  await Admin.findOne({ _id: req.adminId })
+    .sort({ _id: -1 })
+    .select("notice")
+    .populate({
+      path: "notice",
+      select: "title sender notice",
+      populate: {
+        path: "sender",
+        select: "role",
+      },
+    })
+    .then((data) => res.json(data.notice))
+    .catch(() => res.json("Oops! Something went wrong!"));
 });
 
 module.exports = router;

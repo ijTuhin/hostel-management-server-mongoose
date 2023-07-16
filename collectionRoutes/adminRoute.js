@@ -126,15 +126,21 @@ router.post("/edit-request", checkLogin, async (req, res) => {
     {
       $push: {
         edit: {
-          $each: [
-            {
-              ...req.body,
-              user: req.userId,
-            },
-          ],
-          $sort: -1,
+          ...req.body,
+          user: req.userId,
         },
       },
+      // $push: {
+      //   edit: {
+      //     $each: [
+      //       {
+      //         ...req.body,
+      //         user: req.userId,
+      //       },
+      //     ],
+      //     $sort: -1,
+      //   },
+      // },
     }
   )
     .then(() => {
