@@ -14,7 +14,8 @@ router.get("/", checkAdminLogin, async (req, res) => {
     query = { vacancy: req.query.vacancy };
   }
   await Seat.find(query)
-    .sort({ _id: -1 })
+  .populate("member", "matric")
+    // .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch(() => {
       res.status(400).json({

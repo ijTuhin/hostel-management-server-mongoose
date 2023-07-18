@@ -77,18 +77,18 @@ router.post("/", checkLogin, async (req, res) => {
 // UPDATE received status by Id
 router.put("/:id", checkAdminLogin, checkLogin, async (req, res) => {
   /* ===============[ Set Order Condition ]================= */
-  if (time > 11 && time < 17) {
-    meal = "Lunch";
-  } else if (time > 19 && time <= 23) {
-    meal = "Dinner";
-  } else if (time > 4 || time < 12) {
-    meal = "Breakfast";
-  } else meal = null;
+  // if (time > 11 && time < 17) {
+  //   meal = "Lunch";
+  // } else if (time > 19 && time <= 23) {
+  //   meal = "Dinner";
+  // } else if (time > 4 || time < 12) {
+  //   meal = "Breakfast";
+  // } else meal = null;
   /* ====================================================== */
   const admin = await Admin.findOne({ _id: req.adminId }).select("role");
   if (req.userId || admin.role === "warden") {
     await Meal.updateOne(
-      { _id: req.params.id, meal: meal, date: today },
+      { _id: req.params.id, /* meal: meal, */ date: today },
       {
         $set: { status: true },
       }

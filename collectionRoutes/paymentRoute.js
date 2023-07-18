@@ -55,20 +55,22 @@ router.post("/meal-package", checkLogin, async (req, res) => {
               $push: { payments: newPayment._id },
               $set: {
                 meal: 1,
-                coupon: user.coupon + newPayment.package*3,
+                coupon: user.coupon + newPayment.package * 3,
               },
             }
           );
           await BalanceSheet.updateOne(
             { status: 1 },
             {
-              $push: { mealBill: newPayment._id }
+              $push: { mealBill: newPayment._id },
             }
           );
           res.json(
             `Payment Successfull with ${newPayment.package} days package`
           );
-          console.log(`Payment Successfull with ${newPayment.package} days package`)
+          console.log(
+            `Payment Successfull with ${newPayment.package} days package`
+          );
         } else res.json(`Oopss! Payment unsuccessfull!`);
       })
       .catch(() => res.json(req.body));
@@ -102,7 +104,7 @@ router.post("/seat-rent", checkLogin, async (req, res) => {
     await BalanceSheet.updateOne(
       { status: 1 },
       {
-        $push: { seatRent: newPayment._id }
+        $push: { seatRent: newPayment._id },
       }
     )
       .then(() => {
@@ -133,7 +135,14 @@ router.get("/", checkAdminLogin, async (req, res) => {
   }
   await Payment.find(query)
     .sort({ _id: -1 })
-    .populate("user", "matric dept room coupon")
+    .populate({
+      path: "user",
+      select: "matric dept room coupon",
+      populate: {
+        path: "room",
+        select: "room",
+      },
+    })
     .then((data) => {
       res.status(201).json(data);
     })

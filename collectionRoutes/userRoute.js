@@ -52,28 +52,28 @@ router.post("/signup", checkAdminLogin, async (req, res) => {
 });
 router.post("/login", async (req, res) => {
   try {
-    const user = await User.find({ email: req.body.email });
-    if (user && user.length > 0) {
-      //   const isValid = await compare(user[0].password, req.body.password);
-      if (user[0].password === req.body.password) {
-        const token = jwt.sign(
-          {
-            email: user[0].email,
-            userId: user[0]._id,
-          },
-          process.env.SECRET_JWT_TOKEN,
-          {
-            expiresIn: "10h",
-          }
-        );
-
-        res.status(200).json({
-          token: token,
-          time: Date.now().toString(),
-          message: "Login Successful",
-        });
-        console.log(token);
-      } else res.status(401).json("Authentication Failed");
+    const user = await User.findOne({
+      email: req.body.email,
+      password: req.body.password,
+      account: true,
+    });
+    if (user) {
+      const token = jwt.sign(
+        {
+          email: user.email,
+          userId: user._id,
+        },
+        process.env.SECRET_JWT_TOKEN,
+        {
+          expiresIn: "10h",
+        }
+      );
+      res.status(200).json({
+        token: token,
+        time: Date.now().toString(),
+        message: "Login Successful",
+      });
+      console.log(token);
     } else res.status(401).json("Authentication Failed");
   } catch {
     res.status(401).json("Authentication Failed");
@@ -137,6 +137,7 @@ router.get("/", checkAdminLogin, async (req, res) => {
   await User.find({})
     .sort({ _id: -1 })
     .select("matric name enroll sem dept room email account")
+    .populate("room","room")
     .then((data) => {
       res.status(200).json(data);
     })
