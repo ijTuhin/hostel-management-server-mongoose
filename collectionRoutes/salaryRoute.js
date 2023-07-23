@@ -32,9 +32,11 @@ router.get("/", checkAdminLogin, async (req, res) => {
 
 // GET salary record by Id
 router.get("/:id", checkAdminLogin, async (req, res) => {
-  await Salary.findOne({ _id: req.params.id })
+  await Salary.find({ staff: req.params.id })
     .populate("staff", "name position phone")
+    .sort({ _id: -1 })
     .then((data) => {
+      console.log(data)
       res.status(200).json(data);
     })
     .catch(() => {

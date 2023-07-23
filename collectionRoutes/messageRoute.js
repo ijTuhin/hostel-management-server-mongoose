@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const router = express.Router();
 const checkLogin = require("../Authentications/checkLogin.js");
+const checkAdminLogin = require("../Authentications/checkAdminLogin.js");
 const messageSchema = require("../collectionSchemas/messageSchema.js");
 const Message = new mongoose.model("Message", messageSchema);
 const adminSchema = require("../collectionSchemas/adminSchema.js");
@@ -39,7 +40,22 @@ router.post("/", checkLogin, async (req, res) => {
     );
   }
 });
-
+router.get("/", checkAdminLogin, async (req, res) => {
+  await Message.find({ solved: false })
+    .populate("sender", "matric name")
+    .sort({ _id: -1 })
+    .then((data) => {
+      res.json(data);
+    });
+});
+router.put("/reply/:id", checkAdminLogin, async (req, res) => {
+  await Message.updateOne(
+    { _id: req.params.id },
+    {
+      $set: { reply: req.body.reply },
+    }
+  );
+});
 // DELETE message by ID
 router.delete("/:id", checkLogin, async (req, res) => {
   await Message.deleteOne({ _id: req.params.id, sender: req.userId })

@@ -5,6 +5,10 @@ const messageSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  no: {
+    type: Number,
+    required: true,
+  },
   topic: {
     type: String,
     required: true,

@@ -88,7 +88,7 @@ router.put("/:id", checkAdminLogin, checkLogin, async (req, res) => {
   const admin = await Admin.findOne({ _id: req.adminId }).select("role");
   if (req.userId || admin.role === "warden") {
     await Meal.updateOne(
-      { _id: req.params.id, /* meal: meal, */ date: today },
+      { _id: req.params.id, /* meal: meal, */ date: today, status: false },
       {
         $set: { status: true },
       }

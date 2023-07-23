@@ -88,7 +88,7 @@ router.get("/get", checkAdminLogin, async (req, res) => {
     .select("notice")
     .populate({
       path: "notice",
-      select: "title sender notice",
+      select: "title sender notice date month",
       populate: {
         path: "sender",
         select: "role",

@@ -34,6 +34,7 @@ router.get("/", async (req, res) => {
     query = { name: req.query.name }; // http://localhost:3001/utility?name=${name}
   }
   await Utility.find(query)
+    .sort({ _id: -1 })
     .then((data) => {
       res.status(200).json(data);
     })
@@ -102,7 +103,7 @@ router.post("/", async (req, res) => {
 router.put("/insert-bill/:id", async (req, res) => {
   // From Warden Panel
   await Utility.updateOne(
-    { _id: req.params.id, status: 1 },
+    { _id: req.params.id, status: 1, bill: 0 },
     {
       $set: {
         bill: req.body.bill,
@@ -140,7 +141,7 @@ router.put("/pay-due/:id", async (req, res) => {
   await BalanceSheet.updateOne(
     { status: 1 },
     {
-      $push: { utility: req.params.id }
+      $push: { utility: req.params.id },
     }
   )
     .then(() => {

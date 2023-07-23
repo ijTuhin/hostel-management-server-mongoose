@@ -10,6 +10,8 @@ const checkAdminLogin = require("../Authentications/checkAdminLogin.js");
 const checkLogin = require("../Authentications/checkLogin.js");
 const messageSchema = require("../collectionSchemas/messageSchema.js");
 const Message = new mongoose.model("Message", messageSchema);
+const noticeSchema = require("../collectionSchemas/noticeSchema.js");
+const Notice = new mongoose.model("Notice", noticeSchema);
 
 // Meal Manager SIGN-UP & LOG IN
 router.post("/create-meal-manager", async (req, res) => {
@@ -28,16 +30,31 @@ router.post("/create-meal-manager", async (req, res) => {
     "Dec",
   ];
   const month = months[new Date().getMonth()] + "-" + new Date().getFullYear();
-  await Admin.updateOne({ role: "meal", status: 1 }, { $set: { status: 0 } });
+  // await Admin.updateOne({ role: "meal", status: 1 }, { $set: { status: 0 } });
+  const user = await User.findOne({ email: req.body.email });
+  const newNotice = await new Notice({
+    ...req.body,
+    to: user.matric,
+    notice: "You have been selected as Meal Manager. Please, Contact Warden.",
+    sender: req.adminId,
+  }).save();
+  await User.updateOne(
+    { matric: user.matric },
+    {
+      $set: { role: true },
+      $push: { notice: newNotice._id },
+    }
+  );
   await new Admin({
     ...req.body,
+    password: user.password,
     role: "meal",
     month: month,
-    status: 1,
+    status: true,
   })
     .save()
     .then(() => {
-      res.status(200).json("Meal Manager created");
+      res.status(201).json({ msg: "Meal Manager created" });
     })
     .catch(() => {
       res.status(400).json({
@@ -47,36 +64,54 @@ router.post("/create-meal-manager", async (req, res) => {
 });
 router.post("/meal/login", async (req, res) => {
   try {
-    const admin = await Admin.find({
+    const user = await User.findOne({
+      email: req.body.email,
+      password: req.body.password,
+      role: true,
+    });
+    const admin = await Admin.findOne({
       role: "meal",
       email: req.body.email,
-      status: 1,
+      password: req.body.password,
+      status: true,
     });
-    if (admin && admin.length > 0) {
-      if (admin[0].status) {
-        const token = jwt.sign(
-          {
-            email: admin[0].email,
-            adminId: admin[0]._id,
-          },
-          process.env.SECRET_JWT_TOKEN,
-          {
-            expiresIn: "10h",
-          }
-        );
-        res.status(200).json({
-          token: token,
-          role: "meal",
-          time: Date.now().toString(),
-          message: "Meal manager login Successful",
-        });
-      } else res.status(401).json("Authentication Failed");
-    } else res.status(401).json("Authentication Failed");
+    if (admin && user) {
+      const token = jwt.sign(
+        {
+          email: admin.email,
+          adminId: admin._id,
+        },
+        process.env.SECRET_JWT_TOKEN,
+        {
+          expiresIn: "10h",
+        }
+      );
+      res.status(200).json({
+        token: token,
+        role: "meal",
+        time: Date.now().toString(),
+        message: "Meal manager login Successful",
+      });
+    } else res.status(401).json("User do not exists");
   } catch {
     res.status(401).json("Authentication Failed");
   }
 });
-
+router.post("/remove-meal-manager", async (req, res) => {
+  await Admin.updateOne(
+    { role: "meal", status: true },
+    { $set: { status: false } }
+  );
+  await User.updateOne({ matric: req.body.matric }, { $set: { role: false } })
+    .then(() => {
+      res.status(200).json("Meal Manager removed");
+    })
+    .catch(() => {
+      res.status(400).json({
+        error: "Oops! Something went wrong!",
+      });
+    });
+});
 // admin SIGN-UP & LOG IN
 router.post("/signup", async (req, res) => {
   const newAdmin = new Admin(req.body);
@@ -93,13 +128,43 @@ router.post("/signup", async (req, res) => {
 });
 router.post("/login", async (req, res) => {
   try {
-    const admin = await Admin.find({ email: req.body.email });
-    if (admin && admin.length > 0) {
-      if (admin[0].password === req.body.password) {
+    const admin = await Admin.findOne({ email: req.body.email });
+    const user = await User.findOne({
+      email: req.body.email,
+      password: req.body.password,
+      role: true,
+    });
+    // if (admin[0].role === "meal" && user) {
+    //   if (admin[0].password === req.body.password) {
+    //     const token = jwt.sign(
+    //       {
+    //         email: admin[0].email,
+    //         adminId: admin[0]._id,
+    //       },
+    //       process.env.SECRET_JWT_TOKEN,
+    //       {
+    //         expiresIn: "10h",
+    //       }
+    //     );
+
+    //     res.status(200).json({
+    //       token: token,
+    //       role: admin[0].role,
+    //       time: Date.now().toString(),
+    //       message: "Login Successful",
+    //     });
+    //     console.log(token)
+    //   } else res.status(401).json("Authentication Failed");
+    // }
+    /* else */ if (
+      admin /* && admin[0].role !== "meal" */ /* &&
+      admin.length > 0 */
+    ) {
+      if (admin.password === req.body.password) {
         const token = jwt.sign(
           {
-            email: admin[0].email,
-            adminId: admin[0]._id,
+            email: admin.email,
+            adminId: admin._id,
           },
           process.env.SECRET_JWT_TOKEN,
           {
@@ -109,13 +174,15 @@ router.post("/login", async (req, res) => {
 
         res.status(200).json({
           token: token,
-          role: admin[0].role,
+          role: admin.role,
           time: Date.now().toString(),
           message: "Login Successful",
         });
+        // console.log(admin)
       } else res.status(401).json("Authentication Failed");
-    } else res.status(401).json("Authentication Failed");
+    } else console.log("User not found");
   } catch {
+    console.log("Not found.");
     res.status(401).json("Authentication Failed");
   }
 });
@@ -124,23 +191,23 @@ router.post("/edit-request", checkLogin, async (req, res) => {
   await Admin.updateMany(
     { role: "warden" },
     {
-      $push: {
-        edit: {
-          ...req.body,
-          user: req.userId,
-        },
-      },
       // $push: {
       //   edit: {
-      //     $each: [
-      //       {
-      //         ...req.body,
-      //         user: req.userId,
-      //       },
-      //     ],
-      //     $sort: -1,
+      //     ...req.body,
+      //     user: req.userId,
       //   },
       // },
+      $push: {
+        edit: {
+          $each: [
+            {
+              ...req.body,
+              user: req.userId,
+            },
+          ],
+          $sort: -1,
+        },
+      },
     }
   )
     .then(() => {
@@ -150,20 +217,20 @@ router.post("/edit-request", checkLogin, async (req, res) => {
     .catch(() => res.json("Oops! Something went wrong!"));
 });
 
-router.post("/request-approve/:id", checkAdminLogin, async (req, res) => {
+router.put("/request-approve/:id", checkAdminLogin, async (req, res) => {
   const data = await Admin.findOne({
     role: "warden",
   }).select("edit");
-  const check = data.edit.find((i) => i.user === req.params.id);
-  if (check) {
+  const check = data.edit.filter((i) => i.user === req.params.id);
+  if (check.length) {
     await User.updateOne(
       { _id: req.params.id },
       {
         $set: {
-          phone: check.phone,
-          thana: check.thana,
-          district: check.district,
-          address: check.address,
+          phone: check[0]?.phone,
+          thana: check[0]?.thana,
+          district: check[0]?.district,
+          address: check[0]?.address,
         },
       }
     );
@@ -172,11 +239,40 @@ router.post("/request-approve/:id", checkAdminLogin, async (req, res) => {
       {
         $pull: { edit: { user: req.params.id } },
       }
-    ).then(() => res.status(200).json("true"));
-  } else res.json(`can't fine ${req.params.id} data`);
+    );
+    await Message.updateMany(
+      { no: 1, sender: req.params.id },
+      { $set: { solved: true } }
+    ).then(() => {
+      res.status(200).json("true");
+      console.log("Added");
+    });
+  } else {
+    res.json(`can't fine ${req.params.id} data`);
+    console.log(`can't fine ${req.params.id} data`, check);
+  }
 });
 
 // GET Messages
+router.get("/edit-request", checkAdminLogin, async (req, res) => {
+  const admin = await Admin.findOne({
+    _id: req.adminId,
+    role: "warden",
+  })
+    .select("edit")
+    .populate({
+      path: "edit",
+      populate: {
+        path: "user",
+        select: "matric room",
+        populate: { path: "room", select: "room" },
+      },
+      // path:"room",
+      // populate:"room"
+    })
+    .then((data) => res.json(data))
+    .catch(() => res.json("Oops! Something went wrong!"));
+});
 router.get("/message", checkAdminLogin, async (req, res) => {
   const admin = await Admin.findOne({ _id: req.adminId }).select("role");
   await Message.find({ to: admin.role })

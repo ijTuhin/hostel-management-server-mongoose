@@ -14,7 +14,7 @@ router.get("/", checkAdminLogin, async (req, res) => {
     query = { vacancy: req.query.vacancy };
   }
   await Seat.find(query)
-  .populate("member", "matric")
+  .populate("member", "matric name dept sem phone")
     // .sort({ _id: -1 })
     .then((data) => res.json(data))
     .catch(() => {
@@ -118,13 +118,13 @@ router.put("/:room/remove/:matric", checkAdminLogin, async (req, res) => {
 router.put("/:matric/allocate/:room", checkAdminLogin, async (req, res) => {
   const previous = req.body.previous;
   if (previous) {
-    const prevVacant = await Seat.findOne({ room: previous });
+    const prevVacant = await Seat.findOne({ room: previous.room });
     let prevStatus = prevVacant.vacancy;
     if (!prevStatus) {
       prevStatus = true;
     }
     await Seat.updateOne(
-      { room: previous },
+      { room: previous.room },
       {
         $set: { vacant: prevVacant.vacant + 1, vacancy: prevStatus },
         $pull: {
@@ -154,10 +154,10 @@ router.put("/:matric/allocate/:room", checkAdminLogin, async (req, res) => {
     }
   );
   await User.updateOne(
-    { matric: req.params.matric },
+    { _id: req.params.matric },
     {
       $set: {
-        room: req.params.room,
+        room: vacant._id,
       },
     }
   )

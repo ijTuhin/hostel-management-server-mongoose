@@ -38,7 +38,7 @@ router.delete("/:id", checkLogin, async (req, res) => {
 });
 
 // GET by Query
-router.get("/", async (req, res) => {
+router.get("/", checkAdminLogin, async (req, res) => {
   const page = req.query.page;
   const size = req.query.size;
   const total = await Attendance.find({

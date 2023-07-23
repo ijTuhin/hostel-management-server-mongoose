@@ -9,8 +9,8 @@ const BalanceSheet = new mongoose.model("BalanceSheet", balanceSheetSchema);
 
 // POST new date record
 router.post("/", async (req, res) => {
-  const record = await Grocery.find({ date: req.query.date });
-  if (!record.length) {
+  const record = await Grocery.findOne({ date: req.query.date });
+  if (!record) {
     const newGrocery = await new Grocery(req.body).save();
     await BalanceSheet.updateOne(
       { status: 1 },
@@ -53,7 +53,7 @@ router.put("/", async (req, res) => {
   const item = data[0]?.list.filter((i) => {
     if (i.name === name) return true;
   });
-  if (item.length) {
+  if (item?.length) {
     await Grocery.updateOne(
       { "list._id": item[0]._id },
       {

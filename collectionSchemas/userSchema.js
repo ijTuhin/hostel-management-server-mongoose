@@ -12,8 +12,10 @@ const userSchema = mongoose.Schema({
   sem: String,
   dept: String,
   program: String,
-  current: String,
-  last: String,
+  role: {
+    type: Boolean,
+    default: false,
+  },
   account: {
     type: Boolean,
     default: true,
@@ -21,7 +23,6 @@ const userSchema = mongoose.Schema({
   room: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Seat",
-    default: 0,
   },
   enroll: {
     type: String,
