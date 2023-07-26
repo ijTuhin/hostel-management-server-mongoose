@@ -38,7 +38,7 @@ router.post("/", checkAdminLogin, async (req, res) => {
         $push: { notice: newNotice._id },
       }
     );
-  } else if (req.body.to === "All user") {
+  } else if (req.body.to === "All Users") {
     await User.updateMany(
       {},
       {

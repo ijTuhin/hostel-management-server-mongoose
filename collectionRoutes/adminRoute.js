@@ -31,10 +31,11 @@ router.post("/create-meal-manager", async (req, res) => {
   ];
   const month = months[new Date().getMonth()] + "-" + new Date().getFullYear();
   const user = await User.findOne({ email: req.body.email });
+  const admin = await Admin.findOne({ email: req.body.email });
   const newNotice = await new Notice({
     ...req.body,
     to: user.matric,
-    notice: "You have been selected as Meal Manager. Please, Contact Warden.",
+    notice: `You have been selected as Meal Manager. Please, Contact Warden.`,
     sender: req.adminId,
   }).save();
   await User.updateOne(
@@ -44,61 +45,42 @@ router.post("/create-meal-manager", async (req, res) => {
       $push: { notice: newNotice._id },
     }
   );
-  await new Admin({
-    ...req.body,
-    password: user.password,
-    role: "meal",
-    month: month,
-    status: true,
-  })
-    .save()
-    .then(() => {
-      res.status(201).json({ msg: "Meal Manager created" });
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
+  if (admin) {
+    await Admin.updateOne(
+      { email: req.body.email },
+      { $set: { password: user.password, status: true } }
+    )
+      .then(() => {
+        res.status(201).json({ msg: "Meal Manager created" });
+      })
+      .catch(() => {
+        res.status(400).json({
+          error: "Oops! Something went wrong!",
+        });
       });
-    });
-});
-router.post("/meal/login", async (req, res) => {
-  try {
-    const user = await User.findOne({
-      email: req.body.email,
-      password: req.body.password,
-      role: true,
-    });
-    const admin = await Admin.findOne({
+  } else {
+    await new Admin({
+      ...req.body,
+      password: user.password,
       role: "meal",
-      email: req.body.email,
-      password: req.body.password,
+      month: month,
       status: true,
-    });
-    if (admin && user) {
-      const token = jwt.sign(
-        {
-          email: admin.email,
-          adminId: admin._id,
-        },
-        process.env.SECRET_JWT_TOKEN,
-        {
-          expiresIn: "10h",
-        }
-      );
-      res.status(200).json({
-        token: token,
-        role: "meal",
-        time: Date.now().toString(),
-        message: "Meal manager login Successful",
+    })
+      .save()
+      .then(() => {
+        res.status(201).json({ msg: "Meal Manager created" });
+      })
+      .catch(() => {
+        res.status(400).json({
+          error: "Oops! Something went wrong!",
+        });
       });
-    } else res.status(401).json("User do not exists");
-  } catch {
-    res.status(401).json("Authentication Failed");
   }
 });
 router.post("/remove-meal-manager", async (req, res) => {
+  const user = await User.findOne({ matric: req.body.matric });
   await Admin.updateOne(
-    { role: "meal", status: true },
+    { role: "meal", status: true, email: user.email },
     { $set: { status: false } }
   );
   await User.updateOne({ matric: req.body.matric }, { $set: { role: false } })
