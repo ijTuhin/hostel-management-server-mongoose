@@ -30,7 +30,6 @@ router.post("/create-meal-manager", async (req, res) => {
     "Dec",
   ];
   const month = months[new Date().getMonth()] + "-" + new Date().getFullYear();
-  // await Admin.updateOne({ role: "meal", status: 1 }, { $set: { status: 0 } });
   const user = await User.findOne({ email: req.body.email });
   const newNotice = await new Notice({
     ...req.body,
@@ -39,7 +38,7 @@ router.post("/create-meal-manager", async (req, res) => {
     sender: req.adminId,
   }).save();
   await User.updateOne(
-    { matric: user.matric },
+    { email: req.body.email },
     {
       $set: { role: true },
       $push: { notice: newNotice._id },

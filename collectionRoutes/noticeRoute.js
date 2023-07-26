@@ -38,8 +38,16 @@ router.post("/", checkAdminLogin, async (req, res) => {
         $push: { notice: newNotice._id },
       }
     );
-  } else if (req.body.to === "warden" || req.body.to === "finance") {
+  } else if (req.body.to === "All user") {
+    await User.updateMany(
+      {},
+      {
+        $push: { notice: newNotice._id },
+      }
+    );
+  } else {
     const senderAdmin = await Admin.findOne({ _id: req.adminId });
+    console.log(senderAdmin.role, req.body.to);
     if (senderAdmin.role !== req.body.to) {
       await Admin.updateMany(
         { role: req.body.to },
@@ -55,13 +63,6 @@ router.post("/", checkAdminLogin, async (req, res) => {
         }
       );
     }
-  } else {
-    await User.updateMany(
-      {},
-      {
-        $push: { notice: newNotice._id },
-      }
-    );
   }
 });
 
