@@ -15,9 +15,9 @@ const Admin = new mongoose.model("Admin", adminSchema);
 const date = new Date();
 let time = date.toTimeString().split(":")[0];
 time = parseInt(time);
-const today = date.toLocaleDateString();
+const today = date.getDate();
 date.setDate(date.getDate() + 1);
-const tomorrow = date.toLocaleDateString();
+const tomorrow = date.getDate();
 console.log(today, time, tomorrow);
 let meal;
 let day = today;
@@ -44,7 +44,7 @@ router.post("/", checkLogin, async (req, res) => {
     time === 18 ||
     time === 19
   ) {
-    res.json({ message: "It's not meal order time" });
+    console.log({ message: "It's not meal order time" });
   } else {
     var user = await User.findOne({ _id: req.userId });
     var order = await Meal.findOne({
@@ -52,7 +52,7 @@ router.post("/", checkLogin, async (req, res) => {
       meal: meal,
       date: today,
     });
-    if (order) res.json("Order has been placed Already.");
+    if (order) console.log("Order has been placed Already.");
     else {
       var newMeal = await new Meal({
         ...req.body,
@@ -68,32 +68,27 @@ router.post("/", checkLogin, async (req, res) => {
           },
         }
       )
-        .then(() => res.json(`${newMeal.meal} order for ${newMeal.date}`))
-        .catch(() => res.json("Oops! Something went wrong!"));
+        .then(() => console.log(`${newMeal.meal} order for ${newMeal.time}`))
+        .catch(() => console.log("Oops! Something went wrong!"));
     }
   }
 });
 
 // UPDATE received status by Id
 router.put("/:id", checkAdminLogin, checkLogin, async (req, res) => {
-  /* ===============[ Set Order Condition ]================= */
-  // if (time > 11 && time < 17) {
-  //   meal = "Lunch";
-  // } else if (time > 19 && time <= 23) {
-  //   meal = "Dinner";
-  // } else if (time > 4 || time < 12) {
-  //   meal = "Breakfast";
-  // } else meal = null;
-  /* ====================================================== */
+  let date = new Date().getDate();
   const admin = await Admin.findOne({ _id: req.adminId }).select("role");
   if (req.userId || admin.role === "warden") {
     await Meal.updateOne(
-      { _id: req.params.id, /* meal: meal, */ date: today, status: false },
+      {
+        _id: req.params.id, date: date.toString(),
+        status: false,
+      },
       {
         $set: { status: true },
       }
     )
-      .then(() => res.status(201).json("Meal has been served"))
+      .then(() => console.log("Meal has been served", date))
       .catch(() => res.json("Oops! Something went wrong!"));
   }
 });
@@ -143,7 +138,15 @@ router.get("/", checkAdminLogin, async (req, res) => {
   }
   await Meal.find(query)
     .sort({ _id: -1 })
-    .populate("user", "matric dept room name")
+    // .populate("user", "matric dept room name")
+    .populate({
+      path: "user",
+      select: "matric dept room name",
+      populate: {
+        path: "room",
+        select: "room",
+      },
+    })
     .then((data) => res.json(data))
     .catch(() => res.json("Oops! Something went wrong!"));
 });

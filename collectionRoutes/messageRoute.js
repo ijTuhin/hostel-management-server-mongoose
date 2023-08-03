@@ -56,6 +56,14 @@ router.put("/reply/:id", checkAdminLogin, async (req, res) => {
     }
   );
 });
+router.put("/solve/:id", checkAdminLogin, async (req, res) => {
+  await Message.updateOne(
+    { _id: req.params.id },
+    {
+      $set: { solved: true },
+    }
+  );
+});
 // DELETE message by ID
 router.delete("/:id", checkLogin, async (req, res) => {
   await Message.deleteOne({ _id: req.params.id, sender: req.userId })

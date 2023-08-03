@@ -137,7 +137,7 @@ router.get("/", checkAdminLogin, async (req, res) => {
     .sort({ _id: -1 })
     .populate({
       path: "user",
-      select: "matric dept room coupon",
+      select: "matric dept room coupon meal",
       populate: {
         path: "room",
         select: "room",

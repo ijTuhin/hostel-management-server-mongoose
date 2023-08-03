@@ -79,35 +79,4 @@ router.put("/", async (req, res) => {
   }
 });
 
-// Update item of list by ID
-/* router.put("/list/:id", async (req, res) => {
-  await Grocery.updateOne(
-    { "list._id": req.params.id },
-    {
-      $set: {
-        "list.$.name": req.body.name,
-        "list.$.amount": req.body.amount,
-        "list.$.price": req.body.price,
-      },
-    }
-  )
-    .then(() => res.json("Grocery item updated"))
-    .catch(() => res.json("Please check the error!!"));
-}); */
-
-// delete item from list by ID
-/* router.put("/remove-list/:id", async (req, res) => {
-  const itemID = req.params.id;
-  await Grocery.updateOne(
-    { "list._id": req.params.id },
-    {
-      $pull: {
-        list: { _id: itemID },
-      },
-    }
-  )
-    .then(() => res.json("Grocery item deleted"))
-    .catch(() => res.json("Please check the error!!"));
-}); */
-
 module.exports = router;

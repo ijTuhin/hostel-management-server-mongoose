@@ -46,10 +46,7 @@ router.post("/create-meal-manager", async (req, res) => {
     }
   );
   if (admin) {
-    await Admin.updateOne(
-      { email: req.body.email },
-      { $set: { password: user.password, status: true } }
-    )
+    await Admin.updateOne({ email: req.body.email }, { $set: { status: true } })
       .then(() => {
         res.status(201).json({ msg: "Meal Manager created" });
       })
@@ -61,7 +58,6 @@ router.post("/create-meal-manager", async (req, res) => {
   } else {
     await new Admin({
       ...req.body,
-      password: user.password,
       role: "meal",
       month: month,
       status: true,
@@ -112,55 +108,27 @@ router.post("/login", async (req, res) => {
     const admin = await Admin.findOne({ email: req.body.email });
     const user = await User.findOne({
       email: req.body.email,
-      password: req.body.password,
       role: true,
     });
-    // if (admin[0].role === "meal" && user) {
-    //   if (admin[0].password === req.body.password) {
-    //     const token = jwt.sign(
-    //       {
-    //         email: admin[0].email,
-    //         adminId: admin[0]._id,
-    //       },
-    //       process.env.SECRET_JWT_TOKEN,
-    //       {
-    //         expiresIn: "10h",
-    //       }
-    //     );
+    if (admin) {
+      const token = jwt.sign(
+        {
+          email: admin.email,
+          adminId: admin._id,
+        },
+        process.env.SECRET_JWT_TOKEN,
+        {
+          expiresIn: "10h",
+        }
+      );
 
-    //     res.status(200).json({
-    //       token: token,
-    //       role: admin[0].role,
-    //       time: Date.now().toString(),
-    //       message: "Login Successful",
-    //     });
-    //     console.log(token)
-    //   } else res.status(401).json("Authentication Failed");
-    // }
-    /* else */ if (
-      admin /* && admin[0].role !== "meal" */ /* &&
-      admin.length > 0 */
-    ) {
-      if (admin.password === req.body.password) {
-        const token = jwt.sign(
-          {
-            email: admin.email,
-            adminId: admin._id,
-          },
-          process.env.SECRET_JWT_TOKEN,
-          {
-            expiresIn: "10h",
-          }
-        );
-
-        res.status(200).json({
-          token: token,
-          role: admin.role,
-          time: Date.now().toString(),
-          message: "Login Successful",
-        });
-        // console.log(admin)
-      } else res.status(401).json("Authentication Failed");
+      res.status(200).json({
+        token: token,
+        role: admin.role,
+        time: Date.now().toString(),
+        message: "Login Successful",
+      });
+      // console.log(admin)
     } else console.log("User not found");
   } catch {
     console.log("Not found.");

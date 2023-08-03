@@ -47,7 +47,7 @@ router.post("/signup", checkAdminLogin, async (req, res) => {
     .catch((e) => {
       res.status(400).json({
         error: "Oops! Something went wrong!",
-        e
+        e,
       });
     });
 });
@@ -55,7 +55,6 @@ router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({
       email: req.body.email,
-      password: req.body.password,
       account: true,
     });
     if (user) {
@@ -75,7 +74,7 @@ router.post("/login", async (req, res) => {
         message: "Login Successful",
       });
       console.log(token);
-    } else res.status(401).send({ acc: 0, msg:"Account has been blocked" });
+    } else res.status(401).send({ acc: 0, msg: "Account has been blocked" });
   } catch {
     res.status(401).json("Authentication Failed");
   }
@@ -98,7 +97,7 @@ router.get("/my-data", checkLogin, async (req, res) => {
     .populate("reply.from", "name")
     .sort({ _id: -1 });
   const notice = await Notice.find({
-    $or: [{ to: req.userId }, { to: "All Users" }],
+    $or: [{ to: req.userId }, { to: "All User" }],
   })
     .populate("sender", "role name")
     .sort({ _id: -1 });
@@ -137,7 +136,9 @@ router.get("/my-data", checkLogin, async (req, res) => {
 router.get("/", checkAdminLogin, async (req, res) => {
   await User.find({})
     .sort({ "room.room": -1 })
-    .select("matric name enroll sem dept room email account status phone address thana district program role")
+    .select(
+      "matric name enroll sem dept room email account status phone address thana district program role"
+    )
     .populate("room", "room")
     .then((data) => {
       res.status(200).json(data);
@@ -236,7 +237,7 @@ router.get("/search", checkAdminLogin, async (req, res) => {
 });
 router.get("/attendance", checkAdminLogin, async (req, res) => {
   await User.find({})
-    .populate("attendance", "date time")
+    .populate("attendance","_id")
     .populate("room", "room")
     .select("matric dept attendance room")
     .sort({ "room.room": -1 })
