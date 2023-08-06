@@ -8,6 +8,7 @@ const salarySchema = mongoose.Schema({
     default: month,
   },
   salary: Number,
+  trxID: String,
   date: {
       type: String,
       default: date,

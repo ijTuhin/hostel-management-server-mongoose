@@ -25,13 +25,13 @@ const previous = months[m - 1] + "-" + new Date().getFullYear();
 const month = months[m] + "-" + new Date().getFullYear();
 const date = new Date().toLocaleDateString();
 
-// GET by month http://localhost:3001/utility?month=${month}
+// GET by month
 router.get("/", async (req, res) => {
   let query = {};
   if (req.query.month) {
-    query = { month: req.query.month }; // http://localhost:3001/utility?month=${month}
+    query = { month: req.query.month };
   } else if (req.query.name) {
-    query = { name: req.query.name }; // http://localhost:3001/utility?name=${name}
+    query = { name: req.query.name };
   }
   await Utility.find(query)
     .sort({ _id: -1 })
