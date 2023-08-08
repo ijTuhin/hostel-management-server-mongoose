@@ -1,5 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
+const SSLCommerzPayment = require("sslcommerz-lts");
 const router = express.Router();
 const utilitySchema = require("../collectionSchemas/utilitySchema");
 const Utility = new mongoose.model("Utility", utilitySchema);
@@ -123,37 +124,74 @@ router.put("/insert-bill/:id", async (req, res) => {
 });
 router.put("/pay-due/:id", async (req, res) => {
   // From Finance Panel
-  const data = await Utility.findOne({ _id: req.params.id }).select("due");
-  if (data.due.bill > 0) {
+  const item = await Utility.findOne({ _id: req.params.id });
+  const store_id = process.env.SSL_STORE_ID;
+  const store_passwd = process.env.SSL_STORE_PASS;
+  const trxID = "Txr" + Math.random().toString(36).substring(4, 11) + "kdz";
+  const is_live = false;
+  const data = {
+    total_amount: item.bill,
+    currency: "BDT",
+    tran_id: trxID,
+    success_url: `http://localhost:3001/utility/success/${trxID}`,
+    fail_url: "http://localhost:3001/fail",
+    cancel_url: "http://localhost:3001/cancel",
+    ipn_url: "http://localhost:3001/ipn",
+    shipping_method: "Payment",
+    product_name: item.name,
+    product_category: "Bill",
+    product_profile: "Utility",
+    cus_name: item.name,
+    cus_email: "customer@example.com",
+    cus_add1: "Ctg, Bangladesh",
+    cus_phone: "0139999999",
+    ship_name: item.name,
+    ship_add1: "Ctg, Bangladesh",
+    ship_city: "Chattogram",
+    ship_postcode: 4200,
+    ship_country: "Bangladesh",
+  };
+  console.log(data);
+  const sslcz = new SSLCommerzPayment(store_id, store_passwd, is_live);
+  sslcz.init(data).then((apiResponse) => {
+    let GatewayPageURL = apiResponse.GatewayPageURL;
+    res.send({ url: GatewayPageURL });
+    console.log("Redirecting to: ", GatewayPageURL);
+  });
+
+  router.post("/success/:trxId", async (req, res) => {
+    if (item.due.bill > 0) {
+      await Utility.updateOne(
+        { _id: item.due.id, status: 1 },
+        {
+          $set: { status: 0, date: date, trxID: req.params.trxId },
+        }
+      );
+    }
     await Utility.updateOne(
-      { _id: data.due.id, status: 1 },
+      { _id: item._id, status: 1 },
       {
-        $set: { status: 0, date: date },
+        $set: { status: 0, date: date, trxID: req.params.trxId },
       }
     );
-  }
-  await Utility.updateOne(
-    { _id: req.params.id, status: 1 },
-    {
-      $set: { status: 0, date: date },
-    }
-  );
-  await BalanceSheet.updateOne(
-    { status: 1 },
-    {
-      $push: { utility: req.params.id },
-    }
-  )
-    .then(() => {
-      res.status(200).json({
-        result: "Bill Paid",
+    await BalanceSheet.updateOne(
+      { status: 1 },
+      {
+        $push: { utility: item._id },
+      }
+    )
+      .then(() => {
+        console.log({
+          result: "Bill Paid",
+        });
+        res.redirect(`http://localhost:3000`)
+      })
+      .catch(() => {
+        console.log({
+          error: "Oops! Something went wrong!",
+        });
       });
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
-      });
-    });
+  });
 });
 
 module.exports = router;

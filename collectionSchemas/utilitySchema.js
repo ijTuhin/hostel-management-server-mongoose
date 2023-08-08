@@ -29,6 +29,7 @@ const utilitySchema = mongoose.Schema({
             type: ObjectId
         }
     },
+    trxID: String,
     date: {
         type: String,
         default: "---"

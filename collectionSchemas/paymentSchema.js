@@ -16,7 +16,7 @@ const paymentSchema = mongoose.Schema({
   },
   date: {
     type: String,
-    default: date,
+    default: new Date().getDate(),
   },
   month: {
     type: String,
