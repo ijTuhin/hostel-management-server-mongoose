@@ -10,7 +10,7 @@ const Admin = new mongoose.model("Admin", adminSchema);
 const userSchema = require("../collectionSchemas/userSchema.js");
 const User = new mongoose.model("User", userSchema);
 
-// POST new Notice
+// POST new Notice from Admin section
 router.post("/", checkAdminLogin, async (req, res) => {
   let text = `Dear ${req.body.to}, ${req.body.notice} Thank You.`;
   function isMatric(str) {
@@ -66,7 +66,7 @@ router.post("/", checkAdminLogin, async (req, res) => {
   }
 });
 
-// GET by sender
+// GET sent notices from Admin section by sender
 router.get("/", checkAdminLogin, async (req, res) => {
   console.log(req.adminId);
   await Notice.find({ sender: req.adminId })
@@ -76,13 +76,13 @@ router.get("/", checkAdminLogin, async (req, res) => {
 });
 
 // DELETE Notice request by ID
-router.delete("/:id", checkAdminLogin, async (req, res) => {
-  await Notice.deleteOne({ _id: req.params.id })
-    .then(() => res.json("Notice deleted"))
-    .catch(() => res.json("Oops! Something went wrong!"));
-});
+// router.delete("/:id", checkAdminLogin, async (req, res) => {
+//   await Notice.deleteOne({ _id: req.params.id })
+//     .then(() => res.json("Notice deleted"))
+//     .catch(() => res.json("Oops! Something went wrong!"));
+// });
 
-// GET notice
+// GET notice from Admin section
 router.get("/get", checkAdminLogin, async (req, res) => {
   await Admin.findOne({ _id: req.adminId })
     .sort({ _id: -1 })

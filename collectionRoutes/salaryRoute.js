@@ -11,27 +11,27 @@ const balanceSheetSchema = require("../collectionSchemas/balanceSheetSchema.js")
 const BalanceSheet = new mongoose.model("BalanceSheet", balanceSheetSchema);
 
 // GET salary record by query
-router.get("/", checkAdminLogin, async (req, res) => {
-  let query = {};
-  if (req.query.month) {
-    query = { month: req.query.month };
-  } else if (req.query.date) {
-    query = { date: req.query.date };
-  }
-  await Salary.find(query)
-    .populate("staff", "name position phone")
-    .sort({ _id: -1 })
-    .then((data) => {
-      res.json(data);
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
-      });
-    });
-});
+// router.get("/", checkAdminLogin, async (req, res) => {
+//   let query = {};
+//   if (req.query.month) {
+//     query = { month: req.query.month };
+//   } else if (req.query.date) {
+//     query = { date: req.query.date };
+//   }
+//   await Salary.find(query)
+//     .populate("staff", "name position phone")
+//     .sort({ _id: -1 })
+//     .then((data) => {
+//       res.json(data);
+//     })
+//     .catch(() => {
+//       res.status(400).json({
+//         error: "Oops! Something went wrong!",
+//       });
+//     });
+// });
 
-// GET salary record by Id
+// GET salary record by Id from Admin section
 router.get("/:id", checkAdminLogin, async (req, res) => {
   await Salary.find({ staff: req.params.id })
     .populate("staff", "name position phone")
@@ -47,7 +47,7 @@ router.get("/:id", checkAdminLogin, async (req, res) => {
     });
 });
 
-// POST salary by staff ID
+// POST salary by staff ID from Admin section
 router.post("/:id", checkAdminLogin, async (req, res) => {
   const store_id = process.env.SSL_STORE_ID;
   const store_passwd = process.env.SSL_STORE_PASS;
@@ -118,18 +118,18 @@ router.post("/:id", checkAdminLogin, async (req, res) => {
 });
 
 // DELETE salary record by ID
-router.delete("/:id", checkAdminLogin, async (req, res) => {
-  await Salary.deleteOne({ _id: req.params.id })
-    .then(() => {
-      res.json({
-        result: "Data deletion successful",
-      });
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
-      });
-    });
-});
+// router.delete("/:id", checkAdminLogin, async (req, res) => {
+//   await Salary.deleteOne({ _id: req.params.id })
+//     .then(() => {
+//       res.json({
+//         result: "Data deletion successful",
+//       });
+//     })
+//     .catch(() => {
+//       res.status(400).json({
+//         error: "Oops! Something went wrong!",
+//       });
+//     });
+// });
 
 module.exports = router;

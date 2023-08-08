@@ -7,7 +7,7 @@ const Seat = new mongoose.model("Seat", seatSchema);
 const userSchema = require("../collectionSchemas/userSchema.js");
 const User = new mongoose.model("User", userSchema);
 
-// GET all room details
+// GET all room details from Admin section
 router.get("/", checkAdminLogin, async (req, res) => {
   let query = {};
   if (req.query.vacancy) {
@@ -23,6 +23,7 @@ router.get("/", checkAdminLogin, async (req, res) => {
       });
     });
 });
+// GET vacant seats from Admin section
 router.get("/vacant", checkAdminLogin, async (req, res) => {
   await Seat.find({ vacancy: true })
     .sort({ vacant: 1 })
@@ -36,17 +37,17 @@ router.get("/vacant", checkAdminLogin, async (req, res) => {
 });
 
 // GET room details
-router.get("/:id", checkAdminLogin, async (req, res) => {
-  await Seat.find({ _id: req.params.id })
-    .then((data) => {
-      res.status(200).json(data);
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
-      });
-    });
-});
+// router.get("/:id", checkAdminLogin, async (req, res) => {
+//   await Seat.find({ _id: req.params.id })
+//     .then((data) => {
+//       res.status(200).json(data);
+//     })
+//     .catch(() => {
+//       res.status(400).json({
+//         error: "Oops! Something went wrong!",
+//       });
+//     });
+// });
 
 // Add new room
 router.post("/", checkAdminLogin, async (req, res) => {
@@ -66,21 +67,21 @@ router.post("/", checkAdminLogin, async (req, res) => {
 });
 
 // POST many
-router.post("/all", checkAdminLogin, async (req, res) => {
-  await Seat.insertMany(req.body)
-    .then(() => {
-      res.status(200).json({
-        success: "Insertion successful",
-      });
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
-      });
-    });
-});
+// router.post("/all", checkAdminLogin, async (req, res) => {
+//   await Seat.insertMany(req.body)
+//     .then(() => {
+//       res.status(200).json({
+//         success: "Insertion successful",
+//       });
+//     })
+//     .catch(() => {
+//       res.status(400).json({
+//         error: "Oops! Something went wrong!",
+//       });
+//     });
+// });
 
-// Remove user from seat
+// Remove user from seat from Admin section
 router.put("/:room/remove/:matric", checkAdminLogin, async (req, res) => {
   const vacant = await Seat.findOne({ room: req.params.room });
   let status = vacant.vacancy;
@@ -114,7 +115,7 @@ router.put("/:room/remove/:matric", checkAdminLogin, async (req, res) => {
     });
 });
 
-// Allocate User Seat
+// Allocate User Seat from Admin section
 router.put("/:matric/allocate/:room", checkAdminLogin, async (req, res) => {
   const previous = req.body.previous;
   if (previous) {
@@ -177,18 +178,18 @@ router.put("/:matric/allocate/:room", checkAdminLogin, async (req, res) => {
 });
 
 // DELETE room
-router.delete("/:room", checkAdminLogin, async (req, res) => {
-  await Seat.deleteOne({ room: req.params.room })
-    .then((data) => {
-      res.status(200).json({
-        result: "Data deletion successful",
-      });
-    })
-    .catch(() => {
-      res.status(400).json({
-        error: "Oops! Something went wrong!",
-      });
-    });
-});
+// router.delete("/:room", checkAdminLogin, async (req, res) => {
+//   await Seat.deleteOne({ room: req.params.room })
+//     .then((data) => {
+//       res.status(200).json({
+//         result: "Data deletion successful",
+//       });
+//     })
+//     .catch(() => {
+//       res.status(400).json({
+//         error: "Oops! Something went wrong!",
+//       });
+//     });
+// });
 
 module.exports = router;

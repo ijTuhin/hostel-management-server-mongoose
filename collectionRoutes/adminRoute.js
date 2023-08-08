@@ -13,7 +13,7 @@ const Message = new mongoose.model("Message", messageSchema);
 const noticeSchema = require("../collectionSchemas/noticeSchema.js");
 const Notice = new mongoose.model("Notice", noticeSchema);
 
-// Meal Manager SIGN-UP & LOG IN
+// CREAT Meal Manager from Admin section
 router.post("/create-meal-manager", async (req, res) => {
   const months = [
     "Jan",
@@ -73,6 +73,7 @@ router.post("/create-meal-manager", async (req, res) => {
       });
   }
 });
+// REMOVE Meal Manager from Admin section
 router.post("/remove-meal-manager", async (req, res) => {
   const user = await User.findOne({ matric: req.body.matric });
   await Admin.updateOne(
@@ -89,7 +90,7 @@ router.post("/remove-meal-manager", async (req, res) => {
       });
     });
 });
-// admin SIGN-UP & LOG IN
+// admin SIGN-UP & LOG IN from Admin section
 router.post("/signup", async (req, res) => {
   const newAdmin = new Admin(req.body);
   await newAdmin
@@ -136,6 +137,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// POST edit request to Admin from User section
 router.post("/edit-request", checkLogin, async (req, res) => {
   await Admin.updateMany(
     { role: "warden" },
@@ -165,7 +167,7 @@ router.post("/edit-request", checkLogin, async (req, res) => {
     })
     .catch(() => res.json("Oops! Something went wrong!"));
 });
-
+// APPROVE edit request from Admin section
 router.put("/request-approve/:id", checkAdminLogin, async (req, res) => {
   const data = await Admin.findOne({
     role: "warden",
@@ -202,7 +204,7 @@ router.put("/request-approve/:id", checkAdminLogin, async (req, res) => {
   }
 });
 
-// GET Messages
+// GET edit request of user from Admin section
 router.get("/edit-request", checkAdminLogin, async (req, res) => {
   const admin = await Admin.findOne({
     _id: req.adminId,
@@ -222,6 +224,7 @@ router.get("/edit-request", checkAdminLogin, async (req, res) => {
     .then((data) => res.json(data))
     .catch(() => res.json("Oops! Something went wrong!"));
 });
+// GET user complaints from Admin section
 router.get("/message", checkAdminLogin, async (req, res) => {
   const admin = await Admin.findOne({ _id: req.adminId }).select("role");
   await Message.find({ to: admin.role })
@@ -232,7 +235,7 @@ router.get("/message", checkAdminLogin, async (req, res) => {
     .catch(() => res.json("Oops! Something went wrong!"));
 });
 
-// POST reply to message
+// POST reply to message from Admin section
 router.put("/message/:id", checkAdminLogin, async (req, res) => {
   const admin = await Admin.findOne({ _id: req.adminId }).select("role");
   await Message.updateOne(

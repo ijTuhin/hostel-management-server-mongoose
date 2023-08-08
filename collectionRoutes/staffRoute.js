@@ -6,7 +6,7 @@ const staffSchema = require("../collectionSchemas/staffSchema.js");
 const Staff = new mongoose.model("Staff", staffSchema);
 const salarySchema = require("../collectionSchemas/salarySchema.js");
 const Salary = new mongoose.model("Salary", salarySchema);
-// GET all by query
+// GET all staff data from Admin section
 router.get("/", checkAdminLogin, async (req, res) => {
   let query = {};
   if (req.query.joining) {
@@ -30,7 +30,7 @@ router.get("/", checkAdminLogin, async (req, res) => {
     });
 });
 
-// GET staff data by Id
+// GET staff data by Id from Admin section
 router.get("/:id", async (req, res) => {
   await Staff.findOne({ _id: req.params.id })
     .populate("record", "date")
@@ -42,7 +42,7 @@ router.get("/:id", async (req, res) => {
     });
 });
 
-// POST new staff record
+// POST new staff record from Admin section
 router.post("/", checkAdminLogin, async (req, res) => {
   const newStaff = new Staff(req.body);
   await newStaff
@@ -55,7 +55,7 @@ router.post("/", checkAdminLogin, async (req, res) => {
     });
 });
 
-// UPDATE staff data
+// UPDATE staff data from Admin section
 router.put("/:id", checkAdminLogin, async (req, res) => {
   await Staff.updateOne(
     { _id: req.params.id },
@@ -76,7 +76,7 @@ router.put("/:id", checkAdminLogin, async (req, res) => {
     });
 });
 
-// DELETE staff record by ID
+// DELETE staff record by ID from Admin section
 router.delete("/:id", checkAdminLogin, async (req, res) => {
   await Staff.deleteOne({ _id: req.params.id })
     .then(() => {

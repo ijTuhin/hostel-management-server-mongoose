@@ -23,7 +23,7 @@ let meal;
 let day = today;
 /* ============================================= */
 
-// POST meal order with time condition
+// POST meal order with time condition  from User section
 router.post("/", checkLogin, async (req, res) => {
   /* ===============[ Set Meal Condition ]================= */
   if (time > 4 && time < 10) {
@@ -34,7 +34,6 @@ router.post("/", checkLogin, async (req, res) => {
     meal = "Breakfast";
     day = tomorrow;
   }
-  /* ====================================================== */
   if (
     time < 5 ||
     time === 10 ||
@@ -74,58 +73,58 @@ router.post("/", checkLogin, async (req, res) => {
   }
 });
 
-// UPDATE received status by Id
-router.put("/:id", checkAdminLogin, checkLogin, async (req, res) => {
-  let date = new Date().getDate();
-  const admin = await Admin.findOne({ _id: req.adminId }).select("role");
-  if (req.userId || admin.role === "warden") {
-    await Meal.updateOne(
-      {
-        _id: req.params.id, date: date.toString(),
-        status: false,
-      },
-      {
-        $set: { status: true },
-      }
-    )
-      .then(() => console.log("Meal has been served", date))
-      .catch(() => res.json("Oops! Something went wrong!"));
-  }
-});
+// UPDATE confirm meal received status from User section
+// router.put("/:id", checkAdminLogin, checkLogin, async (req, res) => {
+//   let date = new Date().getDate();
+//   const admin = await Admin.findOne({ _id: req.adminId }).select("role");
+//   if (req.userId || admin.role === "warden") {
+//     await Meal.updateOne(
+//       {
+//         _id: req.params.id, date: date.toString(),
+//         status: false,
+//       },
+//       {
+//         $set: { status: true },
+//       }
+//     )
+//       .then(() => console.log("Meal has been served", date))
+//       .catch(() => res.json("Oops! Something went wrong!"));
+//   }
+// });
 
 // DELETE meal request by ID
-router.delete("/:id", checkAdminLogin, checkLogin, async (req, res) => {
-  /* ===============[ Set Meal Cancel Condition ]================= */
-  if (time > 4 && time < 10) {
-    meal = "Lunch";
-  } else if (time > 13 && time < 18) {
-    meal = "Dinner";
-  } else if (time > 19 || time <= 23) {
-    meal = "Breakfast";
-    day = tomorrow;
-  } else meal = null;
-  /* ====================================================== */
-  if (meal) {
-    const user = await User.findOne({ _id: req.userId });
-    await Meal.deleteOne({
-      _id: req.params.id,
-      status: false,
-      meal: meal,
-      date: today,
-    })
-      .then(async () => {
-        await User.updateOne(
-          { _id: req.userId },
-          { $set: { coupon: user.coupon + 1 } }
-        ).then(() => res.json("Deleted"));
-      })
-      .catch(() => res.json("Oops! Something went wrong!"));
-  } else {
-    res.json("Cannot delete order now!");
-  }
-});
+// router.delete("/:id", checkAdminLogin, checkLogin, async (req, res) => {
+//   /* ===============[ Set Meal Cancel Condition ]================= */
+//   if (time > 4 && time < 10) {
+//     meal = "Lunch";
+//   } else if (time > 13 && time < 18) {
+//     meal = "Dinner";
+//   } else if (time > 19 || time <= 23) {
+//     meal = "Breakfast";
+//     day = tomorrow;
+//   } else meal = null;
+//   /* ====================================================== */
+//   if (meal) {
+//     const user = await User.findOne({ _id: req.userId });
+//     await Meal.deleteOne({
+//       _id: req.params.id,
+//       status: false,
+//       meal: meal,
+//       date: today,
+//     })
+//       .then(async () => {
+//         await User.updateOne(
+//           { _id: req.userId },
+//           { $set: { coupon: user.coupon + 1 } }
+//         ).then(() => res.json("Deleted"));
+//       })
+//       .catch(() => res.json("Oops! Something went wrong!"));
+//   } else {
+//     res.json("Cannot delete order now!");
+//   }
+// });
 
-// GET all
+// GET all meal orders from Admin section
 router.get("/", checkAdminLogin, async (req, res) => {
   let query = {};
   if (req.query.date && req.query.meal) {

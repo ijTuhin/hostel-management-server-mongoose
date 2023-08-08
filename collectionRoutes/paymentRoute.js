@@ -26,7 +26,7 @@ const months = [
 ];
 const month = months[new Date().getMonth()] + "-" + new Date().getFullYear();
 
-// POST Meal Bill Payment
+// POST Meal Bill Payment from User section
 router.post("/meal-package", checkLogin, async (req, res) => {
   const authID = req.userId;
   const package = req.body.package;
@@ -116,7 +116,7 @@ router.post("/meal-package", checkLogin, async (req, res) => {
     });
   }
 });
-// POST Seat Rent Payment
+// POST Seat Rent Payment from User section
 router.post("/seat-rent", checkLogin, async (req, res) => {
   const authID = req.userId;
   const phone = req.body.phone;
@@ -200,7 +200,7 @@ router.post("/seat-rent", checkLogin, async (req, res) => {
   }
 });
 
-// GET payment record from Admin Side
+// GET payment record from Admin section
 router.get("/", checkAdminLogin, async (req, res) => {
   let query = {};
   if (req.query.month && req.query.item) {

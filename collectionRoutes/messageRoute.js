@@ -10,7 +10,7 @@ const Admin = new mongoose.model("Admin", adminSchema);
 const userSchema = require("../collectionSchemas/userSchema.js");
 const User = new mongoose.model("User", userSchema);
 
-// POST new Message
+// POST new Message from User section
 router.post("/", checkLogin, async (req, res) => {
   const newMessage = await new Message({
     ...req.body,
@@ -40,6 +40,7 @@ router.post("/", checkLogin, async (req, res) => {
     );
   }
 });
+// GET user complaints from Admin section
 router.get("/", checkAdminLogin, async (req, res) => {
   await Message.find({ solved: false })
     .populate("sender", "matric name")
@@ -48,6 +49,7 @@ router.get("/", checkAdminLogin, async (req, res) => {
       res.json(data);
     });
 });
+// SENT reply to complaints from Admin section
 router.put("/reply/:id", checkAdminLogin, async (req, res) => {
   await Message.updateOne(
     { _id: req.params.id },
@@ -56,6 +58,7 @@ router.put("/reply/:id", checkAdminLogin, async (req, res) => {
     }
   );
 });
+// SOLVE complaints from Admin section
 router.put("/solve/:id", checkAdminLogin, async (req, res) => {
   await Message.updateOne(
     { _id: req.params.id },
@@ -65,10 +68,10 @@ router.put("/solve/:id", checkAdminLogin, async (req, res) => {
   );
 });
 // DELETE message by ID
-router.delete("/:id", checkLogin, async (req, res) => {
-  await Message.deleteOne({ _id: req.params.id, sender: req.userId })
-    .then(() => res.json("Message deleted"))
-    .catch(() => res.json("Oops! Something went wrong!"));
-});
+// router.delete("/:id", checkLogin, async (req, res) => {
+//   await Message.deleteOne({ _id: req.params.id, sender: req.userId })
+//     .then(() => res.json("Message deleted"))
+//     .catch(() => res.json("Oops! Something went wrong!"));
+// });
 
 module.exports = router;

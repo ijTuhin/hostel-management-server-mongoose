@@ -26,7 +26,7 @@ const previous = months[m - 1] + "-" + new Date().getFullYear();
 const month = months[m] + "-" + new Date().getFullYear();
 const date = new Date().toLocaleDateString();
 
-// GET by month
+// GET by month from Admin section
 router.get("/", async (req, res) => {
   let query = {};
   if (req.query.month) {
@@ -46,7 +46,7 @@ router.get("/", async (req, res) => {
     });
 });
 
-// GET by Id
+// GET by individual utility from Admin section
 router.get("/:id", async (req, res) => {
   await Utility.find({ _id: req.params.id })
     .then((data) => {
@@ -59,7 +59,7 @@ router.get("/:id", async (req, res) => {
     });
 });
 
-// POST new Utility record
+// POST new Utility record from Admin section
 router.post("/", async (req, res) => {
   const current = await Utility.find({ month: month });
   if (!current.length) {
@@ -100,7 +100,7 @@ router.post("/", async (req, res) => {
   } else res.json("Utility Record exists");
 });
 
-// UPDATE utility bill & status
+// INSERT utility bill from Admin section
 router.put("/insert-bill/:id", async (req, res) => {
   // From Warden Panel
   await Utility.updateOne(
@@ -122,6 +122,7 @@ router.put("/insert-bill/:id", async (req, res) => {
       });
     });
 });
+// PAY utility bill from Admin section
 router.put("/pay-due/:id", async (req, res) => {
   // From Finance Panel
   const item = await Utility.findOne({ _id: req.params.id });
@@ -184,7 +185,7 @@ router.put("/pay-due/:id", async (req, res) => {
         console.log({
           result: "Bill Paid",
         });
-        res.redirect(`http://localhost:3000`)
+        res.redirect(`http://localhost:3000`);
       })
       .catch(() => {
         console.log({

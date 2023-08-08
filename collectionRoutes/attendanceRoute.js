@@ -8,7 +8,7 @@ const Attendance = new mongoose.model("Attendance", attendanceSchema);
 const userSchema = require("../collectionSchemas/userSchema.js");
 const User = new mongoose.model("User", userSchema);
 
-// POST new attendance
+// POST new attendance from User section
 router.post("/", checkLogin, async (req, res) => {
   const existing = await Attendance.findOne({
     date: new Date().toLocaleDateString(),
@@ -30,27 +30,27 @@ router.post("/", checkLogin, async (req, res) => {
   } else res.json({ message: "Already Marked Attendance" });
 });
 
-// DELETE Attendance request by ID
-router.delete("/:id", checkLogin, async (req, res) => {
-  await Attendance.deleteOne({ _id: req.params.id })
-    .then(() => res.json("Attendance deleted"))
-    .catch(() => res.json("Oops! Something went wrong!"));
-});
+// // DELETE Attendance request by ID
+// router.delete("/:id", checkLogin, async (req, res) => {
+//   await Attendance.deleteOne({ _id: req.params.id })
+//     .then(() => res.json("Attendance deleted"))
+//     .catch(() => res.json("Oops! Something went wrong!"));
+// });
 
 // GET by Query
-router.get("/", checkAdminLogin, async (req, res) => {
-  const page = req.query.page;
-  const size = req.query.size;
-  const total = await Attendance.find({
-    date: new Date().toLocaleDateString(),
-  });
-  await Attendance.find({ date: req.query.date })
-    .sort({ _id: -1 })
-    .populate("user", "matric dept room name")
-    .skip(page * size)
-    .limit(size)
-    .then((data) => res.json({ data, total: total.length }))
-    .catch(() => res.json("Oops! Something went wrong!"));
-});
+// router.get("/", checkAdminLogin, async (req, res) => {
+//   const page = req.query.page;
+//   const size = req.query.size;
+//   const total = await Attendance.find({
+//     date: new Date().toLocaleDateString(),
+//   });
+//   await Attendance.find({ date: req.query.date })
+//     .sort({ _id: -1 })
+//     .populate("user", "matric dept room name")
+//     .skip(page * size)
+//     .limit(size)
+//     .then((data) => res.json({ data, total: total.length }))
+//     .catch(() => res.json("Oops! Something went wrong!"));
+// });
 
 module.exports = router;
