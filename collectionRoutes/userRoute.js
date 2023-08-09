@@ -261,21 +261,21 @@ router.put("/update/:id", checkAdminLogin, async (req, res) => {
     { _id: req.params.id },
     {
       $set: {
-        name: req.body.name,
-        password: req.body.password,
-        current: req.body.current,
-        sem: req.body.sem,
-        phone: req.body.phone,
-        district: req.body.district,
-        address: req.body.address,
-        thana: req.body.thana,
-        dept: req.body.dept,
-        program: req.body.program,
+        name: req.body?.name,
+        matric: req.body?.matric,
+        current: req.body?.current,
+        sem: req.body?.sem,
+        phone: req.body?.phone,
+        district: req.body?.district,
+        address: req.body?.address,
+        thana: req.body?.thana,
+        dept: req.body?.dept,
+        program: req.body?.program,
       },
     }
   )
-    .then(() => res.json("Updated"))
-    .catch(() => res.json("Could not Update"));
+    .then(() => console.log("Updated", req.body))
+    .catch(() => console.log("Could not Update", req.body));
 });
 // UPDATE user rent status
 // router.put("/update-rent", checkLogin, async (req, res) => {

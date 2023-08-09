@@ -172,7 +172,7 @@ router.put("/request-approve/:id", checkAdminLogin, async (req, res) => {
   const data = await Admin.findOne({
     role: "warden",
   }).select("edit");
-  const check = data.edit.filter((i) => i.user === req.params.id);
+  const check = data.edit.filter((i) => i.user.toString() === req.params.id);
   if (check.length) {
     await User.updateOne(
       { _id: req.params.id },
@@ -200,7 +200,7 @@ router.put("/request-approve/:id", checkAdminLogin, async (req, res) => {
     });
   } else {
     res.json(`can't fine ${req.params.id} data`);
-    console.log(`can't fine ${req.params.id} data`, check);
+    console.log(`can't fine ${req.params.id} data`, check, data);
   }
 });
 
@@ -225,15 +225,22 @@ router.get("/edit-request", checkAdminLogin, async (req, res) => {
     .catch(() => res.json("Oops! Something went wrong!"));
 });
 // GET user complaints from Admin section
-router.get("/message", checkAdminLogin, async (req, res) => {
-  const admin = await Admin.findOne({ _id: req.adminId }).select("role");
-  await Message.find({ to: admin.role })
-    .populate("reply.from", "name")
-    .populate("sender", "matric name")
-    .sort({ _id: -1 })
-    .then((data) => res.json(data))
-    .catch(() => res.json("Oops! Something went wrong!"));
-});
+// router.get("/message", checkAdminLogin, async (req, res) => {
+//   const admin = await Admin.findOne({ _id: req.adminId }).select("role");
+//   await Message.find({ to: admin.role })
+//     .populate("reply.from", "name")
+//     .populate({
+//       path:"sender",
+//       select:"matric room",
+//       populate:{
+//         path:"room",
+//         select:"room"
+//       }
+//     })
+//     .sort({ _id: -1 })
+//     .then((data) => res.json(data))
+//     .catch(() => res.json("Oops! Something went wrong!"));
+// });
 
 // POST reply to message from Admin section
 router.put("/message/:id", checkAdminLogin, async (req, res) => {

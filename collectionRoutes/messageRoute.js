@@ -43,7 +43,14 @@ router.post("/", checkLogin, async (req, res) => {
 // GET user complaints from Admin section
 router.get("/", checkAdminLogin, async (req, res) => {
   await Message.find({ solved: false })
-    .populate("sender", "matric name")
+    .populate({
+      path: "sender",
+      select: "matric room",
+      populate: {
+        path: "room",
+        select: "room",
+      },
+    })
     .sort({ _id: -1 })
     .then((data) => {
       res.json(data);
