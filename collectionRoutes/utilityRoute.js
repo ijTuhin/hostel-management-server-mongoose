@@ -131,13 +131,13 @@ router.put("/pay-due/:id", async (req, res) => {
   const trxID = "Txr" + Math.random().toString(36).substring(4, 11) + "kdz";
   const is_live = false;
   const data = {
-    total_amount: item.bill,
+    total_amount: item.bill + item.due.bill,
     currency: "BDT",
     tran_id: trxID,
-    success_url: `http://localhost:3001/utility/success/${trxID}`,
-    fail_url: "http://localhost:3001/fail",
-    cancel_url: "http://localhost:3001/cancel",
-    ipn_url: "http://localhost:3001/ipn",
+    success_url: `https://hms-server-side.onrender.com/utility/success/${trxID}`,
+    fail_url: "https://hms-server-side.onrender.com/fail",
+    cancel_url: "https://hms-server-side.onrender.com/cancel",
+    ipn_url: "https://hms-server-side.onrender.com/ipn",
     shipping_method: "Payment",
     product_name: item.name,
     product_category: "Bill",
@@ -165,7 +165,12 @@ router.put("/pay-due/:id", async (req, res) => {
       await Utility.updateOne(
         { _id: item.due.id, status: 1 },
         {
-          $set: { status: 0, date: date, trxID: req.params.trxId },
+          $set: {
+            status: 0,
+            date: date,
+            trxID: req.params.trxId,
+            "due.bill": 0,
+          },
         }
       );
     }
@@ -185,7 +190,7 @@ router.put("/pay-due/:id", async (req, res) => {
         console.log({
           result: "Bill Paid",
         });
-        res.redirect(`http://localhost:3000`);
+        res.redirect(`https://mess-meal-management-7b408.web.app`);
       })
       .catch(() => {
         console.log({

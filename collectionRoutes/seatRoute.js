@@ -36,18 +36,6 @@ router.get("/vacant", checkAdminLogin, async (req, res) => {
     });
 });
 
-// GET room details
-// router.get("/:id", checkAdminLogin, async (req, res) => {
-//   await Seat.find({ _id: req.params.id })
-//     .then((data) => {
-//       res.status(200).json(data);
-//     })
-//     .catch(() => {
-//       res.status(400).json({
-//         error: "Oops! Something went wrong!",
-//       });
-//     });
-// });
 
 // Add new room
 router.post("/", checkAdminLogin, async (req, res) => {
@@ -66,20 +54,6 @@ router.post("/", checkAdminLogin, async (req, res) => {
     });
 });
 
-// POST many
-// router.post("/all", checkAdminLogin, async (req, res) => {
-//   await Seat.insertMany(req.body)
-//     .then(() => {
-//       res.status(200).json({
-//         success: "Insertion successful",
-//       });
-//     })
-//     .catch(() => {
-//       res.status(400).json({
-//         error: "Oops! Something went wrong!",
-//       });
-//     });
-// });
 
 // Remove user from seat from Admin section
 router.put("/:room/remove/:matric", checkAdminLogin, async (req, res) => {
@@ -176,20 +150,5 @@ router.put("/:matric/allocate/:room", checkAdminLogin, async (req, res) => {
       });
     });
 });
-
-// DELETE room
-// router.delete("/:room", checkAdminLogin, async (req, res) => {
-//   await Seat.deleteOne({ room: req.params.room })
-//     .then((data) => {
-//       res.status(200).json({
-//         result: "Data deletion successful",
-//       });
-//     })
-//     .catch(() => {
-//       res.status(400).json({
-//         error: "Oops! Something went wrong!",
-//       });
-//     });
-// });
 
 module.exports = router;

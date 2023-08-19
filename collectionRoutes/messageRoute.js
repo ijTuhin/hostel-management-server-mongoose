@@ -74,11 +74,5 @@ router.put("/solve/:id", checkAdminLogin, async (req, res) => {
     }
   );
 });
-// DELETE message by ID
-// router.delete("/:id", checkLogin, async (req, res) => {
-//   await Message.deleteOne({ _id: req.params.id, sender: req.userId })
-//     .then(() => res.json("Message deleted"))
-//     .catch(() => res.json("Oops! Something went wrong!"));
-// });
 
 module.exports = router;

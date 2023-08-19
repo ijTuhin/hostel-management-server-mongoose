@@ -30,27 +30,4 @@ router.post("/", checkLogin, async (req, res) => {
   } else res.json({ message: "Already Marked Attendance" });
 });
 
-// // DELETE Attendance request by ID
-// router.delete("/:id", checkLogin, async (req, res) => {
-//   await Attendance.deleteOne({ _id: req.params.id })
-//     .then(() => res.json("Attendance deleted"))
-//     .catch(() => res.json("Oops! Something went wrong!"));
-// });
-
-// GET by Query
-// router.get("/", checkAdminLogin, async (req, res) => {
-//   const page = req.query.page;
-//   const size = req.query.size;
-//   const total = await Attendance.find({
-//     date: new Date().toLocaleDateString(),
-//   });
-//   await Attendance.find({ date: req.query.date })
-//     .sort({ _id: -1 })
-//     .populate("user", "matric dept room name")
-//     .skip(page * size)
-//     .limit(size)
-//     .then((data) => res.json({ data, total: total.length }))
-//     .catch(() => res.json("Oops! Something went wrong!"));
-// });
-
 module.exports = router;

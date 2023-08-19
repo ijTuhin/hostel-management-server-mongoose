@@ -75,12 +75,6 @@ router.get("/", checkAdminLogin, async (req, res) => {
     .catch(() => res.json("Oops! Something went wrong!"));
 });
 
-// DELETE Notice request by ID
-// router.delete("/:id", checkAdminLogin, async (req, res) => {
-//   await Notice.deleteOne({ _id: req.params.id })
-//     .then(() => res.json("Notice deleted"))
-//     .catch(() => res.json("Oops! Something went wrong!"));
-// });
 
 // GET notice from Admin section
 router.get("/get", checkAdminLogin, async (req, res) => {

@@ -44,10 +44,10 @@ router.post("/meal-package", checkLogin, async (req, res) => {
     total_amount: req.body.package * 70,
     currency: "BDT",
     tran_id: trxID,
-    success_url: `http://192.168.0.106:3001/payment/success/${trxID}`,
-    fail_url: "http://192.168.0.106:3001/fail",
-    cancel_url: "http://192.168.0.106:3001/cancel",
-    ipn_url: "http://192.168.0.106:3001/ipn",
+    success_url: `http://192.168.178.102:3001/payment/success/${trxID}`,
+    fail_url: "http://192.168.178.102:3001/fail",
+    cancel_url: "http://192.168.178.102:3001/cancel",
+    ipn_url: "http://192.168.178.102:3001/ipn",
     shipping_method: "Payment",
     product_name: req.userId,
     product_category: "Bill",
@@ -106,8 +106,8 @@ router.post("/meal-package", checkLogin, async (req, res) => {
             },
           }
         ).then(() => {
-          console.log("res.redirect(`exp://192.168.0.106:19000`)");
-          res.redirect(`exp://192.168.0.106:19000`);
+          console.log("res.redirect(`exp://192.168.178.102:19000`)");
+          res.redirect(`exp://192.168.178.102:19000`);
         });
         console.log(
           `Payment Successfull with ${newPayment.package} days package`
@@ -133,10 +133,10 @@ router.post("/seat-rent", checkLogin, async (req, res) => {
     total_amount: 2500,
     currency: "BDT",
     tran_id: trxID,
-    success_url: `http://192.168.0.106:3001/payment/success/${trxID}`,
-    fail_url: "http://192.168.0.106:3001/fail",
-    cancel_url: "http://192.168.0.106:3001/cancel",
-    ipn_url: "http://192.168.0.106:3001/ipn",
+    success_url: `http://192.168.178.102:3001/payment/success/${trxID}`,
+    fail_url: "http://192.168.178.102:3001/fail",
+    cancel_url: "http://192.168.178.102:3001/cancel",
+    ipn_url: "http://192.168.178.102:3001/ipn",
     shipping_method: "Payment",
     product_name: req.userId,
     product_category: "Bill",
@@ -188,8 +188,8 @@ router.post("/seat-rent", checkLogin, async (req, res) => {
         }
       )
         .then(() => {
-          console.log("res.redirect(`exp://192.168.0.106:19000`)");
-          res.redirect(`exp://192.168.0.106:19000`);
+          console.log("res.redirect(`exp://192.168.178.102:19000`)");
+          res.redirect(`exp://192.168.178.102:19000`);
         })
         .catch(() => {
           res.status(400).json({

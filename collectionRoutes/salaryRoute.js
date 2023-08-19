@@ -10,26 +10,7 @@ const Staff = new mongoose.model("Staff", staffSchema);
 const balanceSheetSchema = require("../collectionSchemas/balanceSheetSchema.js");
 const BalanceSheet = new mongoose.model("BalanceSheet", balanceSheetSchema);
 
-// GET salary record by query
-// router.get("/", checkAdminLogin, async (req, res) => {
-//   let query = {};
-//   if (req.query.month) {
-//     query = { month: req.query.month };
-//   } else if (req.query.date) {
-//     query = { date: req.query.date };
-//   }
-//   await Salary.find(query)
-//     .populate("staff", "name position phone")
-//     .sort({ _id: -1 })
-//     .then((data) => {
-//       res.json(data);
-//     })
-//     .catch(() => {
-//       res.status(400).json({
-//         error: "Oops! Something went wrong!",
-//       });
-//     });
-// });
+
 
 // GET salary record by Id from Admin section
 router.get("/:id", checkAdminLogin, async (req, res) => {
@@ -58,10 +39,10 @@ router.post("/:id", checkAdminLogin, async (req, res) => {
     total_amount: staffSalary.salary,
     currency: "BDT",
     tran_id: trxID, 
-    success_url: `http://localhost:3001/salary/success/${trxID}`,
-    fail_url: "http://localhost:3001/fail",
-    cancel_url: "http://localhost:3001/cancel",
-    ipn_url: "http://localhost:3001/ipn",
+    success_url: `https://hms-server-side.onrender.com/salary/success/${trxID}`,
+    fail_url: "https://hms-server-side.onrender.com/fail",
+    cancel_url: "https://hms-server-side.onrender.com/cancel",
+    ipn_url: "https://hms-server-side.onrender.com/ipn",
     shipping_method: "Payment",
     product_name: "Staff",
     product_category: "Salary",
@@ -82,6 +63,7 @@ router.post("/:id", checkAdminLogin, async (req, res) => {
     let GatewayPageURL = apiResponse.GatewayPageURL;
     res.send({ url: GatewayPageURL });
     console.log("Redirecting to: ", GatewayPageURL);
+    console.log("Redirecting to: ", apiResponse);
   });
 
   router.post("/success/:trxId", async (req, res) => {
@@ -108,7 +90,7 @@ router.post("/:id", checkAdminLogin, async (req, res) => {
       )
         .then(() => {
           console.log("Data insertion successful");
-          res.redirect(`http://localhost:3000/salary/${req.params.id}`)
+          res.redirect(`https://mess-meal-management-7b408.web.app/salary/${req.params.trxId}`)
         })
         .catch(() => {
           console.log("Oops! Something went wrong!");
@@ -117,19 +99,5 @@ router.post("/:id", checkAdminLogin, async (req, res) => {
   });
 });
 
-// DELETE salary record by ID
-// router.delete("/:id", checkAdminLogin, async (req, res) => {
-//   await Salary.deleteOne({ _id: req.params.id })
-//     .then(() => {
-//       res.json({
-//         result: "Data deletion successful",
-//       });
-//     })
-//     .catch(() => {
-//       res.status(400).json({
-//         error: "Oops! Something went wrong!",
-//       });
-//     });
-// });
 
 module.exports = router;

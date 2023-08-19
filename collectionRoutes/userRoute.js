@@ -151,75 +151,6 @@ router.get("/", checkAdminLogin, async (req, res) => {
       });
     });
 });
-// router.get("/meal-status", checkAdminLogin, async (req, res) => {
-//   await User.find({})
-//     .sort({ meal: -1 })
-//     .select("matric name sem dept room meal coupon")
-//     .populate("payments", "item date month bill package")
-//     .then((data) => {
-//       res.status(200).json(data);
-//     })
-//     .catch((err) => {
-//       console.error(err);
-//       res.status(400).json({
-//         error: "Oops! Something went wrong!",
-//       });
-//     });
-// });
-// router.get("/rent-status", checkAdminLogin, async (req, res) => {
-//   await User.find({})
-//     .sort({ rent: -1 })
-//     .select("matric name sem dept room rent")
-//     .populate("payments", "item date month")
-//     .then((data) => {
-//       res.status(200).json(data);
-//     })
-//     .catch((err) => {
-//       console.error(err);
-//       res.status(400).json({
-//         error: "Oops! Something went wrong!",
-//       });
-//     });
-// });
-// router.get("/profile/:id", checkAdminLogin, checkLogin, async (req, res) => {
-//   await User.findOne({ _id: req.params.id })
-//     .then((data) => {
-//       res.status(200).json(data);
-//     })
-//     .catch((err) => {
-//       console.error(err);
-//       res.status(400).json({
-//         error: "Oops! Something went wrong!",
-//       });
-//     });
-// });
-// router.get("/update", checkAdminLogin, async (req, res) => {
-//   await User.findOne({ matric: req.query.matric })
-//     .sort({ _id: -1 })
-//     .select({
-//       enroll: 0,
-//       meal: 0,
-//       rent: 0,
-//       email: 0,
-//       matric: 0,
-//       dept: 0,
-//       room: 0,
-//       coupon: 0,
-//       payments: 0,
-//       orders: 0,
-//       attendance: 0,
-//       __v: 0,
-//     })
-//     .then((data) => {
-//       res.status(200).json(data);
-//     })
-//     .catch((err) => {
-//       console.error(err);
-//       res.status(400).json({
-//         error: "Oops! Something went wrong!",
-//       });
-//     });
-// });
 
 // GET searched user from Admin section
 router.get("/search", checkAdminLogin, async (req, res) => {
@@ -277,25 +208,7 @@ router.put("/update/:id", checkAdminLogin, async (req, res) => {
     .then(() => console.log("Updated", req.body))
     .catch(() => console.log("Could not Update", req.body));
 });
-// UPDATE user rent status
-// router.put("/update-rent", checkLogin, async (req, res) => {
-//   const current = await Payment.findOne({
-//     month: month,
-//     item: "rent",
-//     user: req.userId,
-//   });
-//   if (!current)
-//     await User.updateOne(
-//       { _id: req.userId },
-//       {
-//         $set: {
-//           rent: 0,
-//         },
-//       }
-//     )
-//       .then(() => res.json("Updated Rent Status"))
-//       .catch(() => res.json("Could not Update"));
-// });
+
 // UPDATE account validity from Admin section
 router.put("/account/:id", checkAdminLogin, async (req, res) => {
   const user = await User.findOne({ _id: req.params.id });
@@ -323,19 +236,5 @@ router.put("/account/:id", checkAdminLogin, async (req, res) => {
       .catch(() => res.json("Could not Update"));
 });
 
-// DELETE user record
-// router.delete("/:id", checkAdminLogin, async (req, res) => {
-//   await User.deleteOne({ _id: req.params.id })
-//     .then((data) => {
-//       res.status(200).json({
-//         result: "Data deletion successful",
-//       });
-//     })
-//     .catch(() => {
-//       res.status(400).json({
-//         error: "Oops! Something went wrong!",
-//       });
-//     });
-// });
 
 module.exports = router;

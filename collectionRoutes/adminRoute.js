@@ -224,23 +224,6 @@ router.get("/edit-request", checkAdminLogin, async (req, res) => {
     .then((data) => res.json(data))
     .catch(() => res.json("Oops! Something went wrong!"));
 });
-// GET user complaints from Admin section
-// router.get("/message", checkAdminLogin, async (req, res) => {
-//   const admin = await Admin.findOne({ _id: req.adminId }).select("role");
-//   await Message.find({ to: admin.role })
-//     .populate("reply.from", "name")
-//     .populate({
-//       path:"sender",
-//       select:"matric room",
-//       populate:{
-//         path:"room",
-//         select:"room"
-//       }
-//     })
-//     .sort({ _id: -1 })
-//     .then((data) => res.json(data))
-//     .catch(() => res.json("Oops! Something went wrong!"));
-// });
 
 // POST reply to message from Admin section
 router.put("/message/:id", checkAdminLogin, async (req, res) => {
