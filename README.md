@@ -15,6 +15,10 @@
 - **Code Editor/ IDE:** VS code <br/>
 - **Authentication/Hosting:** Firebase, Render 
 
+**Credentials:**
+> - ***Warden*** <br/> **email:** warden2023@gmail.com **password:** warden2023 <br/>
+> - ***Accountant*** <br/> **email:** finance2023@gmail.com **password:** finance2023 <br/>
+> - ***Meal Manager*** <br/> **email:** mealmanager2023@gmail.com **password:** mealmanager2023 <br/>
 ___________________________________________________________
 ### Important links ###
 >*Hostel Management [Admin Web Portal](https://github.com/ijTuhin/hostel-management-webportal)*<br/>
