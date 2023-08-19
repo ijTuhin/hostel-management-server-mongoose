@@ -12,11 +12,11 @@
 - **Back end:** Node.js, Express.js <br/>
 - **Database:** MongoDB, Mongoose <br/>
 - **UI/UX:** Tailwind CSS, React native elements <br/>
-- **Code Editor/ IDE:** VS code, Android studio <br/>
-- **Authentication/Hosting:** Firebase, Vercel/Render 
+- **Code Editor/ IDE:** VS code <br/>
+- **Authentication/Hosting:** Firebase, Render 
 
 ___________________________________________________________
 ### Important links ###
->*Hostel Management [Web Portal](https://github.com/ijTuhin/hostel-management-server)*<br/>
->*Hostel [User App](https://github.com/ijTuhin/hostel-management-server)*<br/>
->*View [Web Portal](https://github.com/ijTuhin/hostel-management-server)*<br/>
+>*Hostel Management [Admin Web Portal](https://github.com/ijTuhin/hostel-management-webportal)*<br/>
+>*Hostel [User App](https://github.com/ijTuhin/hostelServiceAppReactNative)*<br/>
+>*View [Admin Web Portal](https://mess-meal-management-7b408.web.app/)*<br/>
