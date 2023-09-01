@@ -23,4 +23,4 @@ ___________________________________________________________
 ### Important links ###
 >*Hostel Management [Admin Web Portal](https://github.com/ijTuhin/hostel-management-webportal)*<br/>
 >*Hostel [User App](https://github.com/ijTuhin/hostelServiceAppReactNative)*<br/>
->*View [Admin Web Portal](https://mess-meal-management-7b408.web.app/)*<br/>
+>*View [Admin Web Portal](http://localhost:3000/)*<br/>

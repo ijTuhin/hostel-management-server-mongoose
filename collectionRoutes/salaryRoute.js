@@ -39,10 +39,10 @@ router.post("/:id", checkAdminLogin, async (req, res) => {
     total_amount: staffSalary.salary,
     currency: "BDT",
     tran_id: trxID, 
-    success_url: `https://hms-server-side.onrender.com/salary/success/${trxID}`,
-    fail_url: "https://hms-server-side.onrender.com/fail",
-    cancel_url: "https://hms-server-side.onrender.com/cancel",
-    ipn_url: "https://hms-server-side.onrender.com/ipn",
+    success_url: `http://localhost:3001/salary/success/${trxID}`,
+    fail_url: "http://localhost:3001/fail",
+    cancel_url: "http://localhost:3001/cancel",
+    ipn_url: "http://localhost:3001/ipn",
     shipping_method: "Payment",
     product_name: "Staff",
     product_category: "Salary",
@@ -90,7 +90,7 @@ router.post("/:id", checkAdminLogin, async (req, res) => {
       )
         .then(() => {
           console.log("Data insertion successful");
-          res.redirect(`https://mess-meal-management-7b408.web.app/salary/${req.params.trxId}`)
+          res.redirect(`http://localhost:3000/salary/${req.params.trxId}`)
         })
         .catch(() => {
           console.log("Oops! Something went wrong!");

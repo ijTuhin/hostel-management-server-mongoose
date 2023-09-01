@@ -57,13 +57,13 @@ router.post("/", checkAdminLogin, async (req, res) => {
 
 // Remove user from seat from Admin section
 router.put("/:room/remove/:matric", checkAdminLogin, async (req, res) => {
-  const vacant = await Seat.findOne({ room: req.params.room });
-  let status = vacant.vacancy;
+  const vacant = await Seat.findOne({ _id: req.params.room })
+  let status = vacant?.vacancy;
   if (!status) {
     status = true;
   }
   await Seat.updateOne(
-    { room: req.params.room },
+    { _id: req.params.room },
     {
       $set: { vacant: vacant.vacant + 1, vacancy: status },
       $pull: {
@@ -71,10 +71,11 @@ router.put("/:room/remove/:matric", checkAdminLogin, async (req, res) => {
       },
     }
   );
+  console.log(req.params.room, req.params.matric)
   await User.updateOne(
-    { matric: req.params.matric },
+    { _id: req.params.matric },
     {
-      $set: { room: 0 },
+      $set: { room: null },
     }
   )
     .then(() => {

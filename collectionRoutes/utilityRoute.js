@@ -134,10 +134,10 @@ router.put("/pay-due/:id", async (req, res) => {
     total_amount: item.bill + item.due.bill,
     currency: "BDT",
     tran_id: trxID,
-    success_url: `https://hms-server-side.onrender.com/utility/success/${trxID}`,
-    fail_url: "https://hms-server-side.onrender.com/fail",
-    cancel_url: "https://hms-server-side.onrender.com/cancel",
-    ipn_url: "https://hms-server-side.onrender.com/ipn",
+    success_url: `http://localhost:3001/utility/success/${trxID}`,
+    fail_url: "http://localhost:3001/fail",
+    cancel_url: "http://localhost:3001/cancel",
+    ipn_url: "http://localhost:3001/ipn",
     shipping_method: "Payment",
     product_name: item.name,
     product_category: "Bill",
@@ -190,7 +190,7 @@ router.put("/pay-due/:id", async (req, res) => {
         console.log({
           result: "Bill Paid",
         });
-        res.redirect(`https://mess-meal-management-7b408.web.app`);
+        res.redirect(`http://localhost:3000`);
       })
       .catch(() => {
         console.log({
